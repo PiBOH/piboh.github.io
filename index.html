@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PiBOH · GitHub Portfolio</title>
+<meta name="description" content="Portfolio personale GitHub di PiBOH">
+<meta name="theme-color" content="#0d1117">
+<style>
+/* ==========================================================================
+   RESET E VARIABILI (GitHub Dark Theme)
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0d1117;
+  --bg-surface: #161b22;
+  --bg-card: #1c2128;
+  --border-subtle: #21262d;
+  --border-default: #30363d;
+  --text-main: #e6edf3;
+  --text-muted: #8b949e;
+  --text-dim: #6e7681;
+  --accent-blue: #58a6ff;
+  --accent-green: #3fb950;
+  --accent-purple: #bc8cff;
+  --accent-red: #f85149;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background-color: var(--bg);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+a { color: var(--accent-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+svg { display: inline-block; vertical-align: middle; }
+
+/* Skip Link per accessibilità */
+.skip-link {
+  position: fixed; left: 10px; top: 10px; z-index: 1000;
+  transform: translateY(-200%);
+  background: var(--bg-surface); border: 1px solid var(--border-default);
+  padding: 8px 16px; border-radius: var(--radius-sm); font-size: 14px;
+}
+.skip-link:focus { transform: translateY(0); outline: 2px solid var(--accent-blue); }
+
+/* ==========================================================================
+   HEADER E NAVIGAZIONE
+   ========================================================================== */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: rgba(13, 17, 23, 0.9);
+  backdrop-filter: blur(10px);
+}
+.container {
+  max-width: 1080px; margin: 0 auto; padding: 0 16px;
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; min-height: 54px;
+}
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--text-main); }
+.brand:hover { text-decoration: none; }
+
+.nav-tabs { display: flex; gap: 4px; }
+.tab-btn {
+  background: transparent; border: none; color: var(--text-muted);
+  font-size: 14px; font-weight: 500; padding: 6px 12px;
+  border-radius: var(--radius-sm); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+.tab-btn:hover { color: var(--text-main); background-color: var(--bg-card); }
+.tab-btn.active { color: var(--text-main); background-color: rgba(88, 166, 255, 0.1); }
+
+.badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; padding: 0 6px; font-size: 11px; font-weight: 600;
+  color: var(--text-muted); background-color: var(--bg-card);
+  border: 1px solid var(--border-default); border-radius: 10px; line-height: 1;
+}
+
+.sync-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text-dim); white-space: nowrap; margin-left: auto;
+}
+.sync-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background-color: var(--accent-blue);
+  box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.4);
+  animation: pulse-sync 2s infinite;
+}
+.sync-status[data-state="live"] .sync-dot { background-color: var(--accent-green); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.4); }
+.sync-status[data-state="error"] .sync-dot { background-color: var(--accent-red); animation: none; }
+
+@keyframes pulse-sync {
+  0% { box-shadow: 0 0 0 0 currentColor; }
+  70% { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+/* ==========================================================================
+   MAIN CONTENT E PROFILO
+   ========================================================================== */
+.main-content { flex: 1; padding-bottom: 60px; }
+
+.profile-section {
+  display: flex; align-items: flex-start; gap: 24px;
+  padding: 40px 0 32px; border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 32px; flex-wrap: wrap;
+}
+.profile-avatar { flex-shrink: 0; }
+.avatar-img {
+  width: 160px; height: 160px; border-radius: 50%;
+  border: 2px solid var(--border-default); object-fit: cover;
+  background-color: var(--bg-surface); transition: opacity 0.3s;
+}
+.avatar-img.loading { opacity: 0.3; }
+
+.profile-data { flex: 1; min-width: 280px; }
+.profile-name { font-size: 26px; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+.profile-handle { font-size: 18px; color: var(--text-muted); font-weight: 300; margin-top: 2px; }
+.profile-bio { margin-top: 12px; font-size: 15px; color: var(--text-muted); max-width: 600px; line-height: 1.5; }
+
+.profile-stats { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: var(--text-dim); }
+.profile-stats strong { color: var(--text-main); font-weight: 600; }
+.stat-item { display: inline-flex; align-items: center; gap: 4px; }
+
+.profile-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 8px; font-size: 13px; color: var(--text-dim); }
+.meta-item { display: inline-flex; align-items: center; gap: 6px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; font-size: 13px; font-weight: 600;
+  background-color: var(--bg-card); border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm); color: var(--text-main); cursor: pointer;
+  margin-top: 16px; transition: background 0.15s, border-color 0.15s;
+}
+.btn:hover { background-color: #30363d; border-color: var(--text-muted); text-decoration: none; }
+
+/* ==========================================================================
+   SEZIONI CONTENUTO (REPOS & ISSUES)
+   ========================================================================== */
+.content-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 16px; flex-wrap: wrap;
+}
+.content-title { font-size: 18px; font-weight: 600; }
+
+.search-input-wrapper { position: relative; flex: 1; max-width: 300px; min-width: 200px; }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-dim); pointer-events: none; }
+.search-input {
+  width: 100%; padding: 6px 10px 6px 30px; font-size: 13px;
+  background-color: var(--bg); border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm); color: var(--text-main); outline: none;
+}
+.search-input:focus { border-color: var(--accent-blue); }
+.search-input::placeholder { color: var(--text-dim); }
+
+.filter-bar {
+  display: flex; align-items: center; gap: 4px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.filter-btn {
+  background: transparent; border: none; color: var(--text-muted);
+  font-size: 13px; padding: 4px 10px; border-radius: var(--radius-sm); cursor: pointer;
+}
+.filter-btn:hover { color: var(--text-main); background-color: var(--bg-card); }
+.filter-btn.active { color: var(--text-main); background-color: rgba(88, 166, 255, 0.1); }
+
+.sort-select {
+  margin-left: auto; padding: 4px 8px; font-size: 13px;
+  background-color: var(--bg); border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm); color: var(--text-muted); outline: none; cursor: pointer;
+}
+.sort-select:focus { border-color: var(--accent-blue); }
+
+/* Avvisi ed errori API */
+.alert-box {
+  background-color: rgba(248, 81, 73, 0.1); border: 1px solid rgba(248, 81, 73, 0.4);
+  padding: 16px; border-radius: var(--radius-md); color: #ffb4a0; font-size: 14px;
+  margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+}
+
+/* ==========================================================================
+   CARD GRID E SKELETON
+   ========================================================================== */
+.grid-container {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+@media (max-width: 860px) { .grid-container { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .grid-container { grid-template-columns: 1fr; } }
+
+/* Repository Card */
+.repo-card {
+  background-color: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column;
+  gap: 8px; transition: border-color 0.15s, background 0.15s;
+  animation: card-enter 0.3s ease-out both;
+}
+.repo-card:hover { border-color: rgba(88, 166, 255, 0.4); background-color: var(--bg-card); }
+.repo-card.highlight { border-color: var(--accent-blue); box-shadow: 0 0 0 1px var(--accent-blue); }
+
+.repo-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.repo-name-box { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.repo-name { font-size: 15px; font-weight: 600; color: var(--accent-blue); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.repo-visibility { font-size: 10px; padding: 0 6px; border: 1px solid var(--border-default); border-radius: 10px; color: var(--text-dim); line-height: 1.6; }
+
+.repo-desc { font-size: 13px; color: var(--text-muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.repo-homepage { display: inline-block; font-size: 12px; color: var(--accent-blue); text-decoration: none; margin-top: 4px; word-break: break-all; }
+.repo-homepage:hover { text-decoration: underline; }
+.starred-badge { display: inline-block; font-size: 11px; padding: 2px 8px; background: rgba(240, 136, 62, 0.15); color: #f0883e; border: 1px solid rgba(240, 136, 62, 0.4); border-radius: 10px; margin-left: 6px; font-weight: 500; }
+
+.repo-meta-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--text-dim); margin-top: auto; }
+.lang-box { display: inline-flex; align-items: center; gap: 4px; }
+.lang-dot { width: 10px; height: 10px; border-radius: 50%; }
+.stat-box { display: inline-flex; align-items: center; gap: 3px; }
+
+.repo-topics { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.topic-tag { font-size: 11px; padding: 2px 8px; background-color: rgba(88, 166, 255, 0.08); border: 1px solid rgba(88, 166, 255, 0.2); border-radius: 10px; color: var(--accent-blue); }
+
+/* Issue Card */
+.issue-card {
+  background-color: var(--bg-surface); border: 1px solid var(--border-default);
+  border-radius: var(--radius-md); padding: 12px 16px; display: flex; gap: 10px;
+  margin-bottom: 8px; transition: border-color 0.15s, background 0.15s;
+}
+.issue-card:hover { border-color: rgba(88, 166, 255, 0.3); background-color: var(--bg-card); }
+.issue-icon { flex-shrink: 0; margin-top: 2px; }
+.issue-icon.open { color: var(--accent-green); }
+.issue-icon.closed { color: var(--accent-purple); }
+
+.issue-content { flex: 1; min-width: 0; }
+.issue-title-area { display: flex; align-items: flex-start; gap: 6px; flex-wrap: wrap; }
+.issue-title { font-size: 14px; font-weight: 600; color: var(--text-main); }
+.issue-labels { display: flex; gap: 4px; flex-wrap: wrap; }
+.issue-label { font-size: 10px; padding: 0 6px; border-radius: 10px; line-height: 1.6; font-weight: 500; }
+
+.issue-details { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+.issue-repo { color: var(--accent-blue); font-weight: 500; }
+
+/* Empty e Loading States */
+.empty-box { text-align: center; padding: 60px 16px; color: var(--text-dim); font-size: 14px; }
+.skeleton-box { height: 120px; background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); position: relative; overflow: hidden; }
+.skeleton-box::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(139, 148, 158, 0.08), transparent); animation: shimmer 1.5s infinite; }
+
+@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+@keyframes card-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ==========================================================================
+   FOOTER E TOAST
+   ========================================================================== */
+.site-footer { border-top: 1px solid var(--border-subtle); padding: 20px 0; font-size: 12px; color: var(--text-dim); margin-top: auto; }
+.footer-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.footer-ver { font-family: var(--font-mono); color: var(--accent-blue); font-weight: 600; }
+.footer-clock { font-family: var(--font-mono); color: var(--text-muted); }
+
+.toast-msg {
+  position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 100px);
+  background-color: var(--bg-card); border: 1px solid var(--border-default);
+  border-radius: var(--radius-md); padding: 8px 16px; font-size: 13px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.2s, transform 0.2s;
+  z-index: 1000; pointer-events: none;
+}
+.toast-msg.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Vai ai contenuti principali</a>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="https://github.com/PiBOH" target="_blank" class="brand" rel="noopener">
+      <svg viewBox="0 0 16 16" width="22" height="22" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>PiBOH</span>
+    </a>
+    <div class="nav-tabs" role="navigation" aria-label="Sezioni">
+      <button class="tab-btn active" data-target="repos-view">Repository <span id="count-repos" class="badge">0</span></button>
+      <button class="tab-btn" data-target="issues-view">Issues <span id="count-issues" class="badge">0</span></button>
+    </div>
+    <div class="sync-status" id="indicator-sync" data-state="syncing" aria-live="polite">
+      <span class="sync-dot"></span>
+      <span id="label-sync">Connessione...</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main id="main-content" class="main-content container">
+
+  <!-- AVVISI API RATE LIMIT -->
+  <div id="api-alert" class="alert-box" style="display: none;">
+    <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor" style="flex-shrink: 0;"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.39c.66 1.235-.23 2.813-1.637 2.813H2.012C.605 15.25-.285 13.672.376 12.437zM8 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-.75-7.25v4.5a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-1.5 0z"/></svg>
+    <span id="api-alert-text">Attenzione: Rate limit pubblico di GitHub superato o errore di rete. Visualizzazione in modalità offline / limitata.</span>
+  </div>
+
+  <!-- PROFILO UTENTE -->
+  <section class="profile-section" aria-label="Profilo utente GitHub">
+    <div class="profile-avatar">
+      <img id="usr-avatar" class="avatar-img" src="https://github.com/PiBOH.png?size=240" alt="Avatar di PiBOH" width="160" height="160">
+    </div>
+    <div class="profile-data">
+      <h1 id="usr-name" class="profile-name">PiBOH</h1>
+      <p id="usr-login" class="profile-handle">@PiBOH</p>
+      <p id="usr-bio" class="profile-bio">Acquisizione informazioni dal profilo in corso...</p>
+      
+      <div class="profile-stats">
+        <a class="stat-item" id="usr-followers-link" href="https://github.com/PiBOH?tab=followers" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M2 5.5a3.5 3.5 0 1 1 5.898 2.549 5.507 5.507 0 0 1 3.034 4.084.75.75 0 1 1-1.482.235 4.001 4.001 0 0 0-7.9 0 .75.75 0 0 1-1.482-.236A5.507 5.507 0 0 1 3.102 8.05 3.49 3.49 0 0 1 2 5.5z"/></svg> <strong id="usr-followers">0</strong> followers</a>
+        <span>·</span>
+        <a class="stat-item" id="usr-following-link" href="https://github.com/PiBOH?tab=following" target="_blank" rel="noopener"><strong id="usr-following">0</strong> following</a>
+        <span>·</span>
+        <span class="stat-item"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8A2.5 2.5 0 0 1 2 11.5v-9z"/></svg> <strong id="usr-repos">0</strong> repository pubblici</span>
+      </div>
+
+      <div id="usr-meta" class="profile-meta"></div>
+
+      <a id="usr-link" class="btn" href="https://github.com/PiBOH" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        Apri su GitHub
+      </a>
+    </div>
+  </section>
+
+  <!-- REPOSITORIES VIEW -->
+  <section id="repos-view">
+    <div class="content-header">
+      <h2 class="content-title">Elenco Repository</h2>
+      <div class="search-input-wrapper">
+        <svg class="search-icon" viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M11.5 7a4.499 4.499 0 1 1-8.998 0A4.499 4.499 0 0 1 11.5 7zm-.82 4.74a6 6 0 1 1 1.06-1.06l3.04 3.04a.75.75 0 1 1-1.06 1.06l-3.04-3.04z"/></svg>
+        <input type="text" id="filter-q-repo" class="search-input" placeholder="Cerca repository per nome o bio...">
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-type="all">Tutti</button>
+      <button class="filter-btn" data-type="source">Sorgenti originali</button>
+      <button class="filter-btn" data-type="fork">Fork</button>
+      <button class="filter-btn" data-type="starred">Starred</button>
+
+      <select id="sort-sel-repo" class="sort-select" aria-label="Ordina repository">
+        <option value="updated">Ultimo aggiornamento</option>
+        <option value="stars">Stelle (decrescente)</option>
+        <option value="name">Nome (A-Z)</option>
+      </select>
+    </div>
+
+    <!-- Contenitore Grid. Mostra subito 6 skeleton predefiniti per garantire un feedback visivo istantaneo -->
+    <div id="grid-repos" class="grid-container" aria-live="polite">
+      <div class="skeleton-box"></div>
+      <div class="skeleton-box"></div>
+      <div class="skeleton-box"></div>
+      <div class="skeleton-box"></div>
+      <div class="skeleton-box"></div>
+      <div class="skeleton-box"></div>
+    </div>
+
+    <div id="empty-repos" class="empty-box" style="display: none;">
+      <p>Nessun repository trovato corrispondente ai criteri di ricerca attuali.</p>
+    </div>
+  </section>
+
+  <!-- ISSUES VIEW -->
+  <section id="issues-view" style="display: none;">
+    <div class="content-header">
+      <h2 class="content-title">Issues dell'utente</h2>
+      <div class="search-input-wrapper">
+        <svg class="search-icon" viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M11.5 7a4.499 4.499 0 1 1-8.998 0A4.499 4.499 0 0 1 11.5 7zm-.82 4.74a6 6 0 1 1 1.06-1.06l3.04 3.04a.75.75 0 1 1-1.06 1.06l-3.04-3.04z"/></svg>
+        <input type="text" id="filter-q-issue" class="search-input" placeholder="Cerca issue...">
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-state="all">Tutte</button>
+      <button class="filter-btn" data-state="open">Aperte</button>
+      <button class="filter-btn" data-state="closed">Chiuse</button>
+
+      <select id="sort-sel-issue" class="sort-select" aria-label="Ordina issues">
+        <option value="created">Più recenti</option>
+        <option value="updated">Ultima modifica</option>
+        <option value="comments">Più commentate</option>
+      </select>
+    </div>
+
+    <div id="list-issues" aria-live="polite">
+      <div class="skeleton-box" style="height: 60px; margin-bottom: 8px;"></div>
+      <div class="skeleton-box" style="height: 60px; margin-bottom: 8px;"></div>
+    </div>
+
+    <div id="empty-issues" class="empty-box" style="display: none;">
+      <p>Nessuna issue trovata o ricerca API non disponibile al momento.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container footer-container">
+    <div>&copy; <span id="current-yr">2026</span> PiBOH · Dati pubblici erogati via GitHub REST API</div>
+    <div class="footer-ver">Website version 1.0.3f</div>
+    <div>🕐 Ora locale di PiBOH: <span id="fixed-clock" class="footer-clock">--:--:--</span></div>
+    <div>Stato sincronizzazione (auto-aggiornamento ogni 180s): <span id="footer-last-sync">In attesa...</span></div>
+  </div>
+</footer>
+
+<!-- NOTIFICA TOAST -->
+<div id="app-toast" class="toast-msg" role="status" aria-live="polite"></div>
+
+<!-- ==========================================================================
+   LOGICA JAVASCRIPT ULTRA-RESILIENTE
+   ========================================================================== -->
+<script>
+(function() {
+  "use strict";
+
+  // --- IMPOSTAZIONI ---
+  const TARGET_USER = "PiBOH";
+  const GITHUB_API_BASE = "https://api.github.com";
+  const POLLING_INTERVAL_MS = 180000; // 180 secondi (3 minuti) per alleggerire il Rate Limit pubblico
+
+  // --- REFERENZE DOM ---
+  const dom = {
+    avatar: document.getElementById("usr-avatar"),
+    name: document.getElementById("usr-name"),
+    login: document.getElementById("usr-login"),
+    bio: document.getElementById("usr-bio"),
+    followers: document.getElementById("usr-followers"),
+    following: document.getElementById("usr-following"),
+    reposCount: document.getElementById("usr-repos"),
+    meta: document.getElementById("usr-meta"),
+    profileLink: document.getElementById("usr-link"),
+    
+    badgeRepos: document.getElementById("count-repos"),
+    badgeIssues: document.getElementById("count-issues"),
+    
+    viewRepos: document.getElementById("repos-view"),
+    viewIssues: document.getElementById("issues-view"),
+    
+    gridRepos: document.getElementById("grid-repos"),
+    emptyRepos: document.getElementById("empty-repos"),
+    
+    listIssues: document.getElementById("list-issues"),
+    emptyIssues: document.getElementById("empty-issues"),
+    
+    searchRepo: document.getElementById("filter-q-repo"),
+    sortRepo: document.getElementById("sort-sel-repo"),
+    
+    searchIssue: document.getElementById("filter-q-issue"),
+    sortIssue: document.getElementById("sort-sel-issue"),
+    
+    syncIndicator: document.getElementById("indicator-sync"),
+    syncLabel: document.getElementById("label-sync"),
+    apiAlertBox: document.getElementById("api-alert"),
+    apiAlertText: document.getElementById("api-alert-text"),
+    
+    toast: document.getElementById("app-toast"),
+    year: document.getElementById("current-yr"),
+    clock: document.getElementById("fixed-clock"),
+    lastSyncFooter: document.getElementById("footer-last-sync")
+  };
+
+  // --- STATO APPLICAZIONE ---
+  let state = {
+    repos: [],
+    starredRepos: [],
+    issues: [],
+    prevRepoIds: new Set(),
+    prevIssueIds: new Set(),
+    prevStarredRepoIds: new Set(),
+    avatarUrlMemo: "",
+    
+    repoFilterType: "all",
+    repoSortKey: "updated",
+    repoSearchQuery: "",
+    
+    issueFilterState: "all",
+    issueSortKey: "created",
+    issueSearchQuery: ""
+  };
+
+  // --- PALETTE LINGUAGGI GITHUB UFFICIALE ---
+  const languageColors = {
+    JavaScript: "#f1e05a", TypeScript: "#3178c6", Python: "#3572A5", Java: "#b07219",
+    Go: "#00ADD8", Rust: "#dea584", Ruby: "#701516", PHP: "#4F5D95", Swift: "#F05138",
+    Kotlin: "#A97BFF", Dart: "#00B4AB", C: "#555555", "C++": "#f34b7d", "C#": "#178600",
+    HTML: "#e34c26", CSS: "#563d7c", SCSS: "#c6538c", Shell: "#89e051", Vue: "#41b883",
+    Svelte: "#ff3e00", Dockerfile: "#384d54"
+  };
+
+  // --- FUNZIONI DI SUPPORTO (PULITE E CHIARE) ---
+  function getLanguageColor(lang) {
+    return languageColors[lang] || "#8b949e";
+  }
+
+  function isColorLight(hexColor) {
+    if (!hexColor) return false;
+    const r = parseInt(hexColor.slice(0, 2), 16);
+    const g = parseInt(hexColor.slice(2, 4), 16);
+    const b = parseInt(hexColor.slice(4, 6), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 155;
+  }
+
+  function formatRelativeTime(dateString) {
+    if (!dateString) return "";
+    const diffMs = Date.now() - new Date(dateString).getTime();
+    const min = 60000, hour = 3600000, day = 86400000, week = 604800000, month = 2592000000;
+    
+    if (diffMs < min) return "pochi istanti fa";
+    if (diffMs < hour) return `${Math.round(diffMs / min)} min fa`;
+    if (diffMs < day) return `${Math.round(diffMs / hour)} ore fa`;
+    if (diffMs < week) return `${Math.round(diffMs / day)} giorni fa`;
+    if (diffMs < month) return `${Math.round(diffMs / week)} sett fa`;
+    return new Date(dateString).toLocaleDateString("it-IT");
+  }
+
+  function formatCompactNumber(num) {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+    if (num >= 1000) return (num / 1000).toFixed(1) + "k";
+    return String(num);
+  }
+
+  function sanitizeHtml(string) {
+    return String(string).replace(/[&<>"']/g, match => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[match]);
+  }
+
+  let toastTimer = null;
+  function showToastNotification(message, durationMs = 3500) {
+    clearTimeout(toastTimer);
+    dom.toast.textContent = message;
+    dom.toast.classList.add("show");
+    toastTimer = setTimeout(() => dom.toast.classList.remove("show"), durationMs);
+  }
+
+  function setSyncIndicator(statusState, labelText) {
+    dom.syncIndicator.dataset.state = statusState;
+    dom.syncLabel.textContent = labelText;
+  }
+
+  function triggerApiAlert(errorObj, contextMessage, isCached = false) {
+    dom.apiAlertBox.style.display = "flex";
+    let msg = contextMessage;
+    if (errorObj && errorObj.status === 403) {
+      if (isCached) {
+        msg = "Attenzione: Raggiunto il limite massimo di richieste (API Rate Limit GitHub) dal tuo indirizzo IP. Riprova tra un'ora oppure cambia connessione internet (MAX 60 API request per Hour). <b>⚠️ Nota: Il sito non è aggiornato in tempo reale perché hai raggiunto il limite di richieste API, quindi i contenuti visualizzati sono stati recuperati dalla memoria cache.</b>";
+      } else {
+        msg = "Attenzione: Raggiunto il limite massimo di richieste (API Rate Limit GitHub) dal tuo indirizzo IP. Riprova tra un'ora oppure cambia connessione internet.<br>(MAX 60 API request per Hour)";
+      }
+    } else if (errorObj && errorObj.status === 404) {
+      msg = `L'utente GitHub "${TARGET_USER}" non è stato trovato.`;
+    } else if (isCached) {
+      msg += "<br><br><b>⚠️ Nota: Il sito non è aggiornato in tempo reale. I contenuti visualizzati sono stati recuperati dalla memoria cache.</b>";
+    }
+    dom.apiAlertText.innerHTML = msg;
+    console.warn(`[GitHub Portfolio] Avviso API scatenato:`, errorObj);
+  }
+
+  // --- COMUNICAZIONE API ROBUSTA CON CACHE DI FALLBACK ---
+  async function fetchJsonRobust(endpointPath) {
+    const fullUrl = endpointPath.startsWith("http") ? endpointPath : GITHUB_API_BASE + endpointPath;
+    let cache = null;
+    try { cache = await caches.open("github-portfolio-v1"); } catch(e) {}
+    
+    try {
+      const response = await fetch(fullUrl, {
+        headers: { "Accept": "application/vnd.github.v3+json" }
+      });
+      
+      if (!response.ok) {
+        const errorObj = new Error(`Richiesta fallita con stato ${response.status}`);
+        errorObj.status = response.status;
+        if (cache) {
+          const cachedRes = await cache.match(fullUrl);
+          if (cachedRes) {
+            errorObj.cachedData = await cachedRes.json();
+          }
+        }
+        throw errorObj;
+      }
+      
+      if (cache) { cache.put(fullUrl, response.clone()); }
+      return await response.json();
+    } catch (networkOrHttpErr) {
+      if (cache && !networkOrHttpErr.cachedData) {
+        const cachedRes = await cache.match(fullUrl);
+        if (cachedRes) {
+          networkOrHttpErr.cachedData = await cachedRes.json();
+        }
+      }
+      throw networkOrHttpErr;
+    }
+  }
+
+  // Per ottimizzare ed evitare il blocco per Rate Limit, richiediamo solo la prima pagina per i repo.
+  // PiBOH e la stragrande maggioranza degli account personali rientrano nei 100 elementi.
+  async function fetchUserDataRobust() {
+    return fetchJsonRobust(`/users/${TARGET_USER}`);
+  }
+
+  async function fetchPublicReposRobust() {
+    return fetchJsonRobust(`/users/${TARGET_USER}/repos?per_page=100&sort=updated`);
+  }
+
+  async function fetchStarredRepos() {
+    return fetchJsonRobust(`/users/${TARGET_USER}/starred?per_page=100&sort=updated`);
+  }
+
+  async function fetchPublicIssuesRobust() {
+    // La Search API ha limiti ferrei (10 req/min). Gestiamo eventuali fallback in modo elegante
+    return fetchJsonRobust(`/search/issues?q=author:${TARGET_USER}+is:issue&per_page=100&sort=created&order=desc`);
+  }
+
+  async function fetchPublicContactEmailFromRepos(reposList) {
+    const candidateRepos = (reposList || []).filter(repo => repo && repo.owner && repo.owner.login === TARGET_USER).slice(0, 8);
+    for (const repo of candidateRepos) {
+      try {
+        const commits = await fetchJsonRobust(`/repos/${TARGET_USER}/${repo.name}/commits?author=${TARGET_USER}&per_page=5`);
+        if (Array.isArray(commits)) {
+          for (const commitItem of commits) {
+            const email = commitItem && commitItem.commit && commitItem.commit.author && commitItem.commit.author.email ? String(commitItem.commit.author.email).trim() : "";
+            if (email && !email.toLowerCase().includes("noreply")) {
+              return email;
+            }
+          }
+        }
+      } catch (emailErr) {
+        console.warn("[GitHub Portfolio] Impossibile leggere l'email pubblica dai commit di", repo.name, emailErr);
+      }
+    }
+    return "";
+  }
+
+  // --- RENDER COMPONENTI ---
+  function renderUserProfile(userData) {
+    if (!userData) return;
+    state.userData = userData;
+    
+    dom.name.textContent = userData.name || userData.login;
+    dom.login.textContent = "@" + userData.login;
+    dom.bio.textContent = userData.bio || "Nessuna biografia inserita dall'utente.";
+    
+    dom.followers.textContent = formatCompactNumber(userData.followers);
+    dom.following.textContent = formatCompactNumber(userData.following);
+    dom.reposCount.textContent = formatCompactNumber(userData.public_repos);
+    dom.badgeRepos.textContent = formatCompactNumber(userData.public_repos);
+    dom.profileLink.href = sanitizeHtml(userData.html_url);
+    const followersLinkEl = document.getElementById("usr-followers-link");
+    const followingLinkEl = document.getElementById("usr-following-link");
+    if (followersLinkEl) followersLinkEl.href = `${sanitizeHtml(userData.html_url)}?tab=followers`;
+    if (followingLinkEl) followingLinkEl.href = `${sanitizeHtml(userData.html_url)}?tab=following`;
+
+    // Aggiornamento immagine con preloader per evitare flash bianchi
+    if (userData.avatar_url && userData.avatar_url !== state.avatarUrlMemo) {
+      dom.avatar.classList.add("loading");
+      const preloaderImg = new Image();
+      preloaderImg.onload = () => {
+        dom.avatar.src = preloaderImg.src;
+        dom.avatar.classList.remove("loading");
+      };
+      preloaderImg.onerror = () => dom.avatar.classList.remove("loading");
+      preloaderImg.src = userData.avatar_url + "?size=240";
+      state.avatarUrlMemo = userData.avatar_url;
+    }
+
+    // Costruzione campi Meta flessibile
+    let metaBlocks = "";
+    if (userData.company) {
+      metaBlocks += `<span class="meta-item"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M1.75 16A1.75 1.75 0 0 1 0 14.25V1.75C0 .784.784 0 1.75 0h8.5C11.216 0 12 .784 12 1.75v12.5c0 .085-.006.168-.018.25h2.268a.25.25 0 0 0 .25-.25V8.285a.25.25 0 0 0-.111-.208l-1.055-.703a.75.75 0 1 1 .832-1.248l1.055.703c.487.325.779.871.779 1.456v5.965A1.75 1.75 0 0 1 14.25 16h-3.5a.75.75 0 0 1-.197-.026c-.099.017-.2.026-.303.026h-3a.75.75 0 0 1-.75-.75V14h-1v1.25a.75.75 0 0 1-.75.75h-3Z"/></svg> ${sanitizeHtml(userData.company)}</span>`;
+    }
+    if (userData.location) {
+      metaBlocks += `<span class="meta-item"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 0a6.5 6.5 0 0 1 4.596 11.596l-3.535 3.536a1.5 1.5 0 0 1-2.122 0l-3.535-3.536A6.5 6.5 0 0 1 8 0Zm0 1.5a5 5 0 0 0-3.536 8.536l3.536 3.536 3.536-3.536A5 5 0 0 0 8 1.5Zm0 3.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/></svg> ${sanitizeHtml(userData.location)}</span>`;
+    }
+    if (userData.blog) {
+      const blogSafeUrl = userData.blog.startsWith("http") ? userData.blog : "https://" + userData.blog;
+      metaBlocks += `<span class="meta-item"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M7.775 3.275a.75.75 0 0 0 1.06 1.06l1.25-1.25a2 2 0 1 1 2.83 2.83l-2.5 2.5a2 2 0 0 1-2.83 0 .75.75 0 0 0-1.06 1.06 3.5 3.5 0 0 0 4.95 0l2.5-2.5a3.5 3.5 0 0 0-4.95-4.95l-1.25 1.25Zm-4.69 9.64a2 2 0 0 1 0-2.83l2.5-2.5a2 2 0 0 1 2.83 0 .75.75 0 0 0 1.06-1.06 3.5 3.5 0 0 0-4.95 0l-2.5 2.5a3.5 3.5 0 0 0 4.95 4.95l1.25-1.25a.75.75 0 0 0-1.06-1.06l-1.25 1.25a2 2 0 0 1-2.83 0Z"/></svg> <a href="${sanitizeHtml(blogSafeUrl)}" target="_blank" rel="noopener">${sanitizeHtml(userData.blog)}</a></span>`;
+    }
+    if (userData.twitter_username) {
+      metaBlocks += `<span class="meta-item"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Z"/></svg> <a href="https://twitter.com/${sanitizeHtml(userData.twitter_username)}" target="_blank" rel="noopener">@${sanitizeHtml(userData.twitter_username)}</a></span>`;
+    }
+    const contactEmail = userData.email || state.resolvedEmail || "";
+    if (contactEmail) {
+      metaBlocks += `<span class="meta-item"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M0 4.75A1.75 1.75 0 0 1 1.75 3h12.5A1.75 1.75 0 0 1 16 4.75v6.5A1.75 1.75 0 0 1 14.25 13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v.368l6.286 3.928a.5.5 0 0 0 .428 0L14.5 5.118V4.75a.25.25 0 0 0-.25-.25Zm12.75 2.382-5.49 3.431a2 2 0 0 1-2.02 0L1.5 6.882v4.368c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25Z"/></svg> <a href="mailto:${sanitizeHtml(contactEmail)}">${sanitizeHtml(contactEmail)}</a></span>`;
+    } else {
+      metaBlocks += `<span class="meta-item"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M0 4.75A1.75 1.75 0 0 1 1.75 3h12.5A1.75 1.75 0 0 1 16 4.75v6.5A1.75 1.75 0 0 1 14.25 13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v.368l6.286 3.928a.5.5 0 0 0 .428 0L14.5 5.118V4.75a.25.25 0 0 0-.25-.25Zm12.75 2.382-5.49 3.431a2 2 0 0 1-2.02 0L1.5 6.882v4.368c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25Z"/></svg> <span>Mail non trovata o non pubblica</span></span>`;
+    }
+    dom.meta.innerHTML = metaBlocks;
+  }
+
+  function generateRepositoryCardDom(repoObj, isStarredFromOther = false) {
+    const cardEl = document.createElement("article");
+    cardEl.className = "repo-card";
+    cardEl.dataset.repoId = repoObj.id;
+
+    const isFork = repoObj.fork;
+    const iconSvg = isFork
+      ? `<svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" style="color: var(--text-dim);"><path d="M5 3.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>`
+      : `<svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" style="color: var(--text-dim);"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 1 1 0-1.5h1.75v-2h-8A2.5 2.5 0 0 1 2 11.5v-9Z"/></svg>`;
+    
+    const languageBlock = repoObj.language
+      ? `<span class="lang-box"><span class="lang-dot" style="background-color: ${getLanguageColor(repoObj.language)};"></span>${sanitizeHtml(repoObj.language)}</span>`
+      : "";
+      
+    const topicsBlock = (repoObj.topics && repoObj.topics.length > 0)
+      ? `<div class="repo-topics">${repoObj.topics.map(t => `<span class="topic-tag">${sanitizeHtml(t)}</span>`).join("")}</div>`
+      : "";
+
+    const starredBadge = isStarredFromOther 
+      ? `<span class="starred-badge" title="Repository stellato da ${sanitizeHtml(TARGET_USER)}">⭐ ${sanitizeHtml(repoObj.owner.login)}</span>` 
+      : "";
+
+    cardEl.innerHTML = `
+      <div class="repo-header">
+        <div class="repo-name-box">
+          ${iconSvg}
+          <a href="${sanitizeHtml(repoObj.html_url)}" target="_blank" rel="noopener" class="repo-name">${sanitizeHtml(repoObj.name)}</a>
+          ${starredBadge}
+        </div>
+        <span class="repo-visibility">${repoObj.private ? "Private" : "Public"}</span>
+      </div>
+      ${repoObj.description ? `<p class="repo-desc">${sanitizeHtml(repoObj.description)}</p>` : ""}
+      ${repoObj.homepage ? `<a href="${sanitizeHtml(repoObj.homepage)}" target="_blank" rel="noopener" class="repo-homepage"><svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"/></svg>${sanitizeHtml(repoObj.homepage)}</a>` : ""}
+      <div class="repo-meta-footer">
+        ${languageBlock}
+        ${repoObj.stargazers_count ? `<span class="stat-box"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/></svg> ${formatCompactNumber(repoObj.stargazers_count)}</span>` : ""}
+        ${repoObj.forks_count ? `<span class="stat-box"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M5 3.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg> ${formatCompactNumber(repoObj.forks_count)}</span>` : ""}
+        <span>${formatRelativeTime(repoObj.updated_at)}</span>
+      </div>
+      ${topicsBlock}
+    `;
+    return cardEl;
+  }
+
+  function renderFilteredRepositories() {
+    let filteredList = [...state.repos];
+    let isStarredView = false;
+    
+    // Filtraggio per Tipo
+    if (state.repoFilterType === "source") {
+      filteredList = filteredList.filter(item => !item.fork);
+    } else if (state.repoFilterType === "fork") {
+      filteredList = filteredList.filter(item => item.fork);
+    } else if (state.repoFilterType === "starred") {
+      isStarredView = true;
+      // Combina i repository dell'utente con stelle + i repository stellati da altri utenti
+      const myStarredRepos = state.repos.filter(item => (item.stargazers_count || 0) > 0);
+      const otherStarredRepos = state.starredRepos.filter(item => item.owner.login !== TARGET_USER);
+      filteredList = [...myStarredRepos, ...otherStarredRepos];
+      
+      // Rimuovi duplicati (se un repo dell'utente è anche nei starred)
+      const seen = new Set();
+      filteredList = filteredList.filter(item => {
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      });
+    }
+
+    // Filtraggio testuale
+    if (state.repoSearchQuery) {
+      const q = state.repoSearchQuery.toLowerCase();
+      filteredList = filteredList.filter(item => 
+        String(item.name).toLowerCase().includes(q) || 
+        (item.description && String(item.description).toLowerCase().includes(q))
+      );
+    }
+
+    // Ordinamento
+    if (state.repoSortKey === "stars") {
+      filteredList.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
+    } else if (state.repoSortKey === "name") {
+      filteredList.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    } else {
+      // predefinito: last updated
+      filteredList.sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime());
+    }
+
+    dom.gridRepos.innerHTML = "";
+    if (filteredList.length === 0) {
+      dom.emptyRepos.style.display = "block";
+    } else {
+      dom.emptyRepos.style.display = "none";
+      filteredList.forEach(repoObj => {
+        const isFromOther = isStarredView && repoObj.owner.login !== TARGET_USER;
+        dom.gridRepos.appendChild(generateRepositoryCardDom(repoObj, isFromOther));
+      });
+    }
+  }
+
+  function generateIssueCardDom(issueObj) {
+    const issueEl = document.createElement("article");
+    issueEl.className = "issue-card";
+    
+    const isOpen = issueObj.state === "open";
+    const iconSvgDom = isOpen
+      ? `<svg class="issue-icon open" viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Z"/></svg>`
+      : `<svg class="issue-icon closed" viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg>`;
+      
+    const repoContextName = issueObj.repository_url ? issueObj.repository_url.split("/").slice(-2).join("/") : "";
+    
+    let labelsDomString = "";
+    if (issueObj.labels && issueObj.labels.length > 0) {
+      labelsDomString = `<div class="issue-labels">${issueObj.labels.map(lbl => {
+        const bgColor = lbl.color ? "#" + lbl.color : "#8b949e";
+        const fgColor = isColorLight(lbl.color) ? "#24292f" : "#ffffff";
+        return `<span class="issue-label" style="background-color: ${bgColor}; color: ${fgColor};">${sanitizeHtml(lbl.name)}</span>`;
+      }).join("")}</div>`;
+    }
+
+    issueEl.innerHTML = `
+      ${iconSvgDom}
+      <div class="issue-content">
+        <div class="issue-title-area">
+          <a href="${sanitizeHtml(issueObj.html_url)}" target="_blank" rel="noopener" class="issue-title">${sanitizeHtml(issueObj.title)}</a>
+          ${labelsDomString}
+        </div>
+        <div class="issue-details">
+          <a href="${sanitizeHtml((issueObj.repository_url || "").replace("api.github.com/repos", "github.com"))}" target="_blank" rel="noopener" class="issue-repo">${sanitizeHtml(repoContextName)}</a>
+          <span>#${issueObj.number}</span>
+          <span>${isOpen ? "Aperta" : "Chiusa"} ${formatRelativeTime(isOpen ? issueObj.created_at : issueObj.closed_at)}</span>
+          ${issueObj.comments ? `<span><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" style="margin-right:2px;"><path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 1 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Z"/></svg>${issueObj.comments}</span>` : ""}
+        </div>
+      </div>
+    `;
+    return issueEl;
+  }
+
+  function renderFilteredIssues() {
+    let filteredIssues = [...state.issues];
+
+    if (state.issueFilterState === "open") {
+      filteredIssues = filteredIssues.filter(item => item.state === "open");
+    } else if (state.issueFilterState === "closed") {
+      filteredIssues = filteredIssues.filter(item => item.state === "closed");
+    }
+
+    if (state.issueSearchQuery) {
+      const qText = state.issueSearchQuery.toLowerCase();
+      filteredIssues = filteredIssues.filter(item => 
+        String(item.title).toLowerCase().includes(qText) || 
+        (item.body && String(item.body).toLowerCase().includes(qText))
+      );
+    }
+
+    if (state.issueSortKey === "updated") {
+      filteredIssues.sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime());
+    } else if (state.issueSortKey === "comments") {
+      filteredIssues.sort((a, b) => (b.comments || 0) - (a.comments || 0));
+    } else {
+      // predefinito: created
+      filteredIssues.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    }
+
+    dom.listIssues.innerHTML = "";
+    if (filteredIssues.length === 0) {
+      dom.emptyIssues.style.display = "block";
+    } else {
+      dom.emptyIssues.style.display = "none";
+      filteredIssues.forEach(issueObj => {
+        dom.listIssues.appendChild(generateIssueCardDom(issueObj));
+      });
+    }
+  }
+
+  // --- MOTORE DI SINCRONIZZAZIONE GLOBALE ---
+  async function synchronizeEntirePortfolio() {
+    setSyncIndicator("syncing", "Sincronizzazione in corso...");
+    dom.apiAlertBox.style.display = "none"; // ripulisci avvisi precedenti
+    let isUsingCacheFallback = false;
+    
+    try {
+      // 1. Carica Utente
+      let userData = null;
+      try {
+        userData = await fetchUserDataRobust();
+        renderUserProfile(userData);
+      } catch (err) {
+        if (err.cachedData) {
+          isUsingCacheFallback = true;
+          triggerApiAlert(err, "Impossibile recuperare il profilo utente in tempo reale.", true);
+          setSyncIndicator("error", "Modalità Cache");
+          renderUserProfile(err.cachedData);
+        } else {
+          triggerApiAlert(err, "Impossibile recuperare il profilo utente. Riprova più tardi.");
+          setSyncIndicator("error", "Errore Rete/API");
+          return; // Interrompe il flusso principale se non c'è nemmeno la cache
+        }
+      }
+
+      // 2. Carica Repository
+      try {
+        const reposDataList = await fetchPublicReposRobust();
+        if (reposDataList && Array.isArray(reposDataList)) {
+          const currentFetchedIds = new Set(reposDataList.map(item => item.id));
+          if (state.prevRepoIds.size > 0) {
+            const addedRepos = reposDataList.filter(r => !state.prevRepoIds.has(r.id));
+            if (addedRepos.length > 0) showToastNotification(`🆕 Aggiunto repository: ${addedRepos[0].name}`);
+          }
+          state.prevRepoIds = currentFetchedIds;
+          state.repos = reposDataList;
+          dom.badgeRepos.textContent = formatCompactNumber(reposDataList.length);
+          if (!state.userData?.email && !state.resolvedEmail) {
+            const discoveredEmail = await fetchPublicContactEmailFromRepos(reposDataList);
+            if (discoveredEmail) {
+              state.resolvedEmail = discoveredEmail;
+              if (state.userData) renderUserProfile(state.userData);
+            }
+          }
+          renderFilteredRepositories();
+        }
+      } catch (repoErr) {
+        if (repoErr.cachedData && Array.isArray(repoErr.cachedData)) {
+          isUsingCacheFallback = true;
+          triggerApiAlert(repoErr, "Impossibile recuperare l'elenco dei repository in tempo reale.", true);
+          setSyncIndicator("error", "Modalità Cache");
+          state.repos = repoErr.cachedData;
+          dom.badgeRepos.textContent = formatCompactNumber(repoErr.cachedData.length);
+          renderFilteredRepositories();
+        } else {
+          triggerApiAlert(repoErr, "Impossibile recuperare l'elenco dei repository.");
+        }
+      }
+
+      // 2b. Carica Repository Stellati (da altri utenti)
+      try {
+        const starredReposList = await fetchStarredRepos();
+        if (starredReposList && Array.isArray(starredReposList)) {
+          const currentStarredIds = new Set(starredReposList.map(item => item.id));
+          if (state.prevStarredRepoIds.size > 0) {
+            const addedStarred = starredReposList.filter(r => !state.prevStarredRepoIds.has(r.id));
+            if (addedStarred.length > 0) showToastNotification(`⭐ Nuovo repo stellato: ${addedStarred[0].owner.login}/${addedStarred[0].name}`);
+          }
+          state.prevStarredRepoIds = currentStarredIds;
+          state.starredRepos = starredReposList;
+        }
+      } catch (starredErr) {
+        if (starredErr.cachedData && Array.isArray(starredErr.cachedData)) {
+          isUsingCacheFallback = true;
+          state.starredRepos = starredErr.cachedData;
+        }
+        console.warn("[GitHub Portfolio] Impossibile recuperare repository stellati:", starredErr);
+      }
+
+      // 3. Carica Issues
+      try {
+        const issuesResponseContainer = await fetchPublicIssuesRobust();
+        const issuesDataList = (issuesResponseContainer && issuesResponseContainer.items) ? issuesResponseContainer.items : [];
+        const currentFetchedIssueIds = new Set(issuesDataList.map(item => item.id));
+        if (state.prevIssueIds.size > 0) {
+          const addedIssues = issuesDataList.filter(iss => !state.prevIssueIds.has(iss.id));
+          if (addedIssues.length > 0) showToastNotification(`🆕 Nuova Issue rilevata: #${addedIssues[0].number}`);
+        }
+        state.prevIssueIds = currentFetchedIssueIds;
+        state.issues = issuesDataList;
+        dom.badgeIssues.textContent = formatCompactNumber(issuesDataList.length);
+        if (dom.viewIssues.style.display !== "none") {
+          renderFilteredIssues();
+        }
+      } catch (issueErr) {
+        if (issueErr.cachedData && issueErr.cachedData.items) {
+          isUsingCacheFallback = true;
+          triggerApiAlert(issueErr, "Impossibile recuperare le issue in tempo reale.", true);
+          setSyncIndicator("error", "Modalità Cache");
+          state.issues = issueErr.cachedData.items;
+          dom.badgeIssues.textContent = formatCompactNumber(issueErr.cachedData.items.length);
+          if (dom.viewIssues.style.display !== "none") {
+            renderFilteredIssues();
+          }
+        } else {
+          console.warn("[GitHub Portfolio] Limitazione API sulla ricerca Issues riscontrata.", issueErr);
+          dom.emptyIssues.style.display = "block";
+          dom.emptyIssues.innerHTML = "<p>Risultati issues non disponibili al momento per restrizioni di rate limit temporaneo.</p>";
+          dom.listIssues.innerHTML = "";
+        }
+      }
+
+      // Conclusione
+      const timestampString = new Date().toLocaleTimeString("it-IT", { timeZone: "Europe/Rome" });
+      if (isUsingCacheFallback) {
+        dom.lastSyncFooter.textContent = `Memoria Cache (ultimo accesso prima del blocco)`;
+      } else {
+        dom.lastSyncFooter.textContent = `Avvenuta con successo alle ${timestampString}`;
+        setSyncIndicator("live", "Sistema Allineato");
+      }
+
+    } catch (criticalFailure) {
+      console.error("[GitHub Portfolio] Collasso totale della sincronizzazione:", criticalFailure);
+      setSyncIndicator("error", "Fallimento Generale");
+      triggerApiAlert(criticalFailure, "Un errore inaspettato impedisce di mostrare correttamente i contenuti.");
+    }
+  }
+
+  // --- OROLOGIO INTERNO DI ROMA ---
+  function updateFixedRomaClock() {
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat("it-IT", {
+      timeZone: "Europe/Rome",
+      weekday: "short", day: "2-digit", month: "short", year: "numeric",
+      hour: "2-digit", minute: "2-digit", second: "2-digit",
+      hour12: false
+    });
+    dom.clock.textContent = formatter.format(now);
+  }
+
+  // --- GESTIONE DEGLI EVENTI UTENTE ---
+  function setupEventListeners() {
+    // Navigazione tra tab
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    tabButtons.forEach(btnEl => {
+      btnEl.addEventListener("click", () => {
+        tabButtons.forEach(x => x.classList.remove("active"));
+        btnEl.classList.add("active");
+        
+        const targetViewId = btnEl.dataset.target;
+        if (targetViewId === "repos-view") {
+          dom.viewRepos.style.display = "block";
+          dom.viewIssues.style.display = "none";
+        } else {
+          dom.viewRepos.style.display = "none";
+          dom.viewIssues.style.display = "block";
+          renderFilteredIssues(); // Esegue rendering sul momento per garanzia
+        }
+      });
+    });
+
+    // Filtri e ricerca Repository
+    let searchTimerRepo = null;
+    dom.searchRepo.addEventListener("input", () => {
+      clearTimeout(searchTimerRepo);
+      searchTimerRepo = setTimeout(() => {
+        state.repoSearchQuery = dom.searchRepo.value.trim();
+        renderFilteredRepositories();
+      }, 200);
+    });
+
+    const filterBtnsRepo = dom.viewRepos.querySelectorAll(".filter-btn");
+    filterBtnsRepo.forEach(btnEl => {
+      btnEl.addEventListener("click", () => {
+        filterBtnsRepo.forEach(x => x.classList.remove("active"));
+        btnEl.classList.add("active");
+        state.repoFilterType = btnEl.dataset.type;
+        renderFilteredRepositories();
+      });
+    });
+
+    dom.sortRepo.addEventListener("change", () => {
+      state.repoSortKey = dom.sortRepo.value;
+      renderFilteredRepositories();
+    });
+
+    // Filtri e ricerca Issues
+    let searchTimerIssue = null;
+    dom.searchIssue.addEventListener("input", () => {
+      clearTimeout(searchTimerIssue);
+      searchTimerIssue = setTimeout(() => {
+        state.issueSearchQuery = dom.searchIssue.value.trim();
+        renderFilteredIssues();
+      }, 200);
+    });
+
+    const filterBtnsIssue = dom.viewIssues.querySelectorAll(".filter-btn");
+    filterBtnsIssue.forEach(btnEl => {
+      btnEl.addEventListener("click", () => {
+        filterBtnsIssue.forEach(x => x.classList.remove("active"));
+        btnEl.classList.add("active");
+        state.issueFilterState = btnEl.dataset.state;
+        renderFilteredIssues();
+      });
+    });
+
+    dom.sortIssue.addEventListener("change", () => {
+      state.issueSortKey = dom.sortIssue.value;
+      renderFilteredIssues();
+    });
+  }
+
+  // --- AVVIO DELL'APPLICAZIONE ---
+  function initializeApplication() {
+    dom.year.textContent = String(new Date().getFullYear());
+    
+    // Attiva orologio locale indipendente di Roma
+    updateFixedRomaClock();
+    setInterval(updateFixedRomaClock, 1000);
+    
+    // Inizializza pulsanti e input
+    setupEventListeners();
+    
+    // Avvia subito l'acquisizione dati
+    synchronizeEntirePortfolio();
+    
+    // Pianifica il ciclo continuo distanziato di 180 secondi (3 minuti)
+    setInterval(synchronizeEntirePortfolio, POLLING_INTERVAL_MS);
+  }
+
+  // Avvio garantito a caricamento DOM
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeApplication);
+  } else {
+    initializeApplication();
+  }
+
+})();
+</script>
+</body>
+</html>
