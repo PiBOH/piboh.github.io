@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PiBOH · GitHub Portfolio</title>
-<meta name="description" content="Portfolio personale GitHub di PiBOH">
+<meta name="description" content="PiBOH's WebSite">
 <meta name="theme-color" content="#0d1117">
 <style>
 /* ==========================================================================
@@ -184,6 +184,27 @@ svg { display: inline-block; vertical-align: middle; }
 }
 .sort-select:focus { border-color: var(--accent-blue); }
 
+.starred-subfilter {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  margin: -8px 0 18px;
+}
+.starred-subfilter-label {
+  font-size: 12px; color: var(--text-dim); font-weight: 600;
+}
+.starred-type-btn {
+  background: transparent; border: 1px solid var(--border-default); color: var(--text-muted);
+  font-size: 12px; padding: 4px 10px; border-radius: var(--radius-sm); cursor: pointer;
+}
+.starred-type-btn:hover { color: var(--text-main); background-color: var(--bg-card); }
+.starred-type-btn.active { color: var(--text-main); background-color: rgba(88, 166, 255, 0.1); border-color: rgba(88, 166, 255, 0.35); }
+.starred-lists-buttons { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.starred-list-btn {
+  background: transparent; border: 1px solid var(--border-default); color: var(--text-muted);
+  font-size: 12px; padding: 4px 10px; border-radius: var(--radius-sm); cursor: pointer;
+}
+.starred-list-btn:hover { color: var(--text-main); background-color: var(--bg-card); }
+.starred-list-btn.active { color: var(--text-main); background-color: rgba(240, 136, 62, 0.12); border-color: rgba(240, 136, 62, 0.35); }
+
 /* Avvisi ed errori API */
 .alert-box {
   background-color: rgba(248, 81, 73, 0.1); border: 1px solid rgba(248, 81, 73, 0.4);
@@ -359,6 +380,20 @@ svg { display: inline-block; vertical-align: middle; }
       </select>
     </div>
 
+    <div id="starred-subfilter" class="starred-subfilter" style="display: none;">
+      <span class="starred-subfilter-label">Tipo di star:</span>
+      <button class="starred-type-btn active" data-starred-type="all">Tutte</button>
+      <button class="starred-type-btn" data-starred-type="received">Stelle ricevute</button>
+      <button class="starred-type-btn" data-starred-type="given">Stelle messe</button>
+    </div>
+
+    <div id="starred-lists-subfilter" class="starred-subfilter" style="display: none;">
+      <span class="starred-subfilter-label">Liste pubbliche:</span>
+      <div id="starred-lists-buttons" class="starred-lists-buttons">
+        <button class="starred-list-btn active" data-starred-list="all">Tutte le liste</button>
+      </div>
+    </div>
+
     <!-- Contenitore Grid. Mostra subito 6 skeleton predefiniti per garantire un feedback visivo istantaneo -->
     <div id="grid-repos" class="grid-container" aria-live="polite">
       <div class="skeleton-box"></div>
@@ -412,7 +447,7 @@ svg { display: inline-block; vertical-align: middle; }
 <footer class="site-footer">
   <div class="container footer-container">
     <div>&copy; <span id="current-yr">2026</span> PiBOH · Dati pubblici erogati via GitHub REST API</div>
-    <div class="footer-ver">Website version 1.0.3f</div>
+    <div class="footer-ver">Website version 1.0.4b-opzb</div>
     <div>🕐 Ora locale di PiBOH: <span id="fixed-clock" class="footer-clock">--:--:--</span></div>
     <div>Stato sincronizzazione (auto-aggiornamento ogni 180s): <span id="footer-last-sync">In attesa...</span></div>
   </div>
@@ -459,6 +494,9 @@ svg { display: inline-block; vertical-align: middle; }
     
     searchRepo: document.getElementById("filter-q-repo"),
     sortRepo: document.getElementById("sort-sel-repo"),
+    starredSubfilter: document.getElementById("starred-subfilter"),
+    starredListsSubfilter: document.getElementById("starred-lists-subfilter"),
+    starredListsButtons: document.getElementById("starred-lists-buttons"),
     
     searchIssue: document.getElementById("filter-q-issue"),
     sortIssue: document.getElementById("sort-sel-issue"),
@@ -478,6 +516,8 @@ svg { display: inline-block; vertical-align: middle; }
   let state = {
     repos: [],
     starredRepos: [],
+    starredLists: [],
+    starredListMap: {},
     issues: [],
     prevRepoIds: new Set(),
     prevIssueIds: new Set(),
@@ -485,6 +525,8 @@ svg { display: inline-block; vertical-align: middle; }
     avatarUrlMemo: "",
     
     repoFilterType: "all",
+    repoStarredType: "all",
+    repoStarredList: "all",
     repoSortKey: "updated",
     repoSearchQuery: "",
     
@@ -565,7 +607,7 @@ svg { display: inline-block; vertical-align: middle; }
     } else if (errorObj && errorObj.status === 404) {
       msg = `L'utente GitHub "${TARGET_USER}" non è stato trovato.`;
     } else if (isCached) {
-      msg += "<br><br><b>⚠️ Nota: Il sito non è aggiornato in tempo reale. I contenuti visualizzati sono stati recuperati dalla memoria cache.</b>";
+      msg += "<br><br><b>⚠️ Nota: Il sito non è aggiornato in tempo reale./nI contenuti visualizzati sono stati recuperati dalla memoria cache.</b>";
     }
     dom.apiAlertText.innerHTML = msg;
     console.warn(`[GitHub Portfolio] Avviso API scatenato:`, errorObj);
@@ -621,9 +663,120 @@ svg { display: inline-block; vertical-align: middle; }
     return fetchJsonRobust(`/users/${TARGET_USER}/starred?per_page=100&sort=updated`);
   }
 
+  async function fetchPublicStarredLists() {
+    const discoveredLists = [];
+    const discoveredMap = {};
+
+    // GitHub espone ogni lista pubblica con URL /stars/<user>/lists/<slug>.
+    const seedLists = [
+      { name: "🗃️ Archived", slug: "archived" },
+      { name: "⚙️ Management", slug: "management" },
+      { name: "🎓 Learning", slug: "learning" },
+      { name: "✔️ Tested", slug: "tested" },
+      { name: "🤖 Artificial intelligence", slug: "artificial-intelligence" },
+      { name: "🛡️ Stable", slug: "stable" },
+      { name: "💽 Demo Version Support", slug: "demo-version-support" },
+      { name: "🌐 WebSite", slug: "website" },
+      { name: "🔱 Other User Repository/Fork", slug: "other-user-repository-fork" },
+      { name: "❌ Files NOT CHECKED", slug: "files-not-checked" },
+      { name: "🛠️ Beta", slug: "beta" }
+    ];
+
+    try {
+      const indexResponse = await fetch(`https://r.jina.ai/http://github.com/${TARGET_USER}?tab=stars`);
+      if (indexResponse.ok) {
+        const indexText = await indexResponse.text();
+        const listLinkMatches = indexText.match(new RegExp(`/stars/${TARGET_USER}/lists/[A-Za-z0-9_-]+`, "g")) || [];
+        listLinkMatches.forEach(linkPath => {
+          const slug = linkPath.split('/').pop();
+          if (!seedLists.some(item => item.slug === slug)) {
+            const name = slug.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+            seedLists.push({ name, slug });
+          }
+        });
+      }
+    } catch (indexErr) {
+      console.warn('[GitHub Portfolio] Impossibile scoprire automaticamente nuove liste starred.', indexErr);
+    }
+
+    const parseRepoFullNames = (text) => {
+      const results = new Set();
+      const repoMatches = text.match(/href="\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)"/g) || [];
+      repoMatches.forEach(match => {
+        const parts = match.match(/href="\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)"/);
+        if (parts && parts[1] && parts[2]) {
+          const fullName = `${parts[1]}/${parts[2]}`;
+          if (!fullName.includes("?") && !fullName.includes("issues") && !fullName.includes("pulls") && !fullName.includes("actions")) {
+            results.add(fullName);
+          }
+        }
+      });
+
+      const textMatches = text.match(/\b[A-Za-z0-9_.-]+\s*\/\s*[A-Za-z0-9_.-]+\b/g) || [];
+      textMatches.forEach(match => {
+        const fullName = match.replace(/\s+/g, "");
+        if (!fullName.includes("github.com") && !fullName.includes("http")) {
+          results.add(fullName);
+        }
+      });
+
+      return Array.from(results);
+    };
+
+    for (const listItem of seedLists) {
+      const listHref = `https://github.com/stars/${TARGET_USER}/lists/${listItem.slug}`;
+      const proxyHref = `https://r.jina.ai/http://github.com/stars/${TARGET_USER}/lists/${listItem.slug}`;
+      try {
+        const response = await fetch(proxyHref);
+        if (!response.ok) continue;
+        const pageText = await response.text();
+        const repoNames = parseRepoFullNames(pageText);
+        if (repoNames.length > 0) {
+          discoveredLists.push({ name: listItem.name, href: listHref });
+          discoveredMap[listHref] = repoNames;
+        }
+      } catch (listErr) {
+        console.warn('[GitHub Portfolio] Impossibile leggere la lista starred pubblica', listItem.name, listErr);
+      }
+    }
+
+    return { lists: discoveredLists, map: discoveredMap };
+  }
+
+  function renderStarredListsFilter() {
+    if (!dom.starredListsSubfilter || !dom.starredListsButtons) return;
+    const shouldShow = state.repoFilterType === "starred" && state.starredLists.length > 0;
+    dom.starredListsSubfilter.style.display = shouldShow ? "flex" : "none";
+    if (!shouldShow) return;
+
+    const buttonsHtml = [`<button class="starred-list-btn ${state.repoStarredList === 'all' ? 'active' : ''}" data-starred-list="all">Tutte le liste</button>`]
+      .concat(state.starredLists.map(listItem => `<button class="starred-list-btn ${state.repoStarredList === listItem.href ? 'active' : ''}" data-starred-list="${sanitizeHtml(listItem.href)}">${sanitizeHtml(listItem.name)}</button>`))
+      .join('');
+
+    dom.starredListsButtons.innerHTML = buttonsHtml;
+  }
+
   async function fetchPublicIssuesRobust() {
     // La Search API ha limiti ferrei (10 req/min). Gestiamo eventuali fallback in modo elegante
     return fetchJsonRobust(`/search/issues?q=author:${TARGET_USER}+is:issue&per_page=100&sort=created&order=desc`);
+  }
+
+  async function fetchPublicContactEmailFromProfilePage() {
+    try {
+      const response = await fetch(`https://r.jina.ai/http://github.com/${TARGET_USER}`);
+      if (!response.ok) return "";
+      const pageText = await response.text();
+      const emailMatches = pageText.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || [];
+      for (const rawEmail of emailMatches) {
+        const email = String(rawEmail).trim();
+        if (!email.toLowerCase().includes("noreply") && !email.toLowerCase().includes("github.com")) {
+          return email;
+        }
+      }
+    } catch (profileMailErr) {
+      console.warn("[GitHub Portfolio] Impossibile leggere l'email dalla pagina pubblica del profilo.", profileMailErr);
+    }
+    return "";
   }
 
   async function fetchPublicContactEmailFromRepos(reposList) {
@@ -749,6 +902,11 @@ svg { display: inline-block; vertical-align: middle; }
   function renderFilteredRepositories() {
     let filteredList = [...state.repos];
     let isStarredView = false;
+
+    if (dom.starredSubfilter) {
+      dom.starredSubfilter.style.display = state.repoFilterType === "starred" ? "flex" : "none";
+    }
+    renderStarredListsFilter();
     
     // Filtraggio per Tipo
     if (state.repoFilterType === "source") {
@@ -757,10 +915,16 @@ svg { display: inline-block; vertical-align: middle; }
       filteredList = filteredList.filter(item => item.fork);
     } else if (state.repoFilterType === "starred") {
       isStarredView = true;
-      // Combina i repository dell'utente con stelle + i repository stellati da altri utenti
       const myStarredRepos = state.repos.filter(item => (item.stargazers_count || 0) > 0);
-      const otherStarredRepos = state.starredRepos.filter(item => item.owner.login !== TARGET_USER);
-      filteredList = [...myStarredRepos, ...otherStarredRepos];
+      const otherStarredRepos = state.starredRepos.filter(item => item.owner && item.owner.login !== TARGET_USER);
+
+      if (state.repoStarredType === "received") {
+        filteredList = [...myStarredRepos];
+      } else if (state.repoStarredType === "given") {
+        filteredList = [...otherStarredRepos];
+      } else {
+        filteredList = [...myStarredRepos, ...otherStarredRepos];
+      }
       
       // Rimuovi duplicati (se un repo dell'utente è anche nei starred)
       const seen = new Set();
@@ -769,6 +933,11 @@ svg { display: inline-block; vertical-align: middle; }
         seen.add(item.id);
         return true;
       });
+
+      if (state.repoStarredList !== "all") {
+        const allowedFullNames = new Set(state.starredListMap[state.repoStarredList] || []);
+        filteredList = filteredList.filter(item => allowedFullNames.has(item.full_name));
+      }
     }
 
     // Filtraggio testuale
@@ -888,6 +1057,12 @@ svg { display: inline-block; vertical-align: middle; }
       let userData = null;
       try {
         userData = await fetchUserDataRobust();
+        if (!userData.email && !state.resolvedEmail) {
+          const profilePageEmail = await fetchPublicContactEmailFromProfilePage();
+          if (profilePageEmail) {
+            state.resolvedEmail = profilePageEmail;
+          }
+        }
         renderUserProfile(userData);
       } catch (err) {
         if (err.cachedData) {
@@ -936,7 +1111,7 @@ svg { display: inline-block; vertical-align: middle; }
         }
       }
 
-      // 2b. Carica Repository Stellati (da altri utenti)
+      // 2b. Carica Repository Stellati (da altri utenti) + Liste pubbliche
       try {
         const starredReposList = await fetchStarredRepos();
         if (starredReposList && Array.isArray(starredReposList)) {
@@ -947,11 +1122,27 @@ svg { display: inline-block; vertical-align: middle; }
           }
           state.prevStarredRepoIds = currentStarredIds;
           state.starredRepos = starredReposList;
+
+          const starredListsPayload = await fetchPublicStarredLists();
+          state.starredLists = Array.isArray(starredListsPayload.lists) ? starredListsPayload.lists : [];
+          state.starredListMap = starredListsPayload.map || {};
+          if (state.repoStarredList !== "all" && !state.starredLists.some(item => item.href === state.repoStarredList)) {
+            state.repoStarredList = "all";
+          }
+          if (state.repoFilterType === "starred") {
+            renderFilteredRepositories();
+          }
         }
       } catch (starredErr) {
         if (starredErr.cachedData && Array.isArray(starredErr.cachedData)) {
           isUsingCacheFallback = true;
           state.starredRepos = starredErr.cachedData;
+        }
+        state.starredLists = [];
+        state.starredListMap = {};
+        state.repoStarredList = "all";
+        if (state.repoFilterType === "starred") {
+          renderFilteredRepositories();
         }
         console.warn("[GitHub Portfolio] Impossibile recuperare repository stellati:", starredErr);
       }
@@ -1056,6 +1247,26 @@ svg { display: inline-block; vertical-align: middle; }
         state.repoFilterType = btnEl.dataset.type;
         renderFilteredRepositories();
       });
+    });
+
+    const starredTypeBtns = dom.viewRepos.querySelectorAll(".starred-type-btn");
+    starredTypeBtns.forEach(btnEl => {
+      btnEl.addEventListener("click", () => {
+        starredTypeBtns.forEach(x => x.classList.remove("active"));
+        btnEl.classList.add("active");
+        state.repoStarredType = btnEl.dataset.starredType;
+        renderFilteredRepositories();
+      });
+    });
+
+    dom.viewRepos.addEventListener("click", (event) => {
+      const listBtn = event.target.closest(".starred-list-btn");
+      if (!listBtn) return;
+      const allListBtns = dom.viewRepos.querySelectorAll(".starred-list-btn");
+      allListBtns.forEach(x => x.classList.remove("active"));
+      listBtn.classList.add("active");
+      state.repoStarredList = listBtn.dataset.starredList || "all";
+      renderFilteredRepositories();
     });
 
     dom.sortRepo.addEventListener("change", () => {
