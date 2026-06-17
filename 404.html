@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Pagina non trovata</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+  html, body { height: 100%; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #05060a;
+    color: #e6e8ef;
+    overflow: hidden;
+  }
+
+  /* Animated gradient background */
+  .bg-anim {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(99,102,241,0.35), transparent 45%),
+      radial-gradient(circle at 80% 70%, rgba(236,72,153,0.30), transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(34,211,238,0.20), transparent 55%),
+      #05060a;
+    animation: shift 18s ease-in-out infinite alternate;
+    filter: blur(0px);
+  }
+  @keyframes shift {
+    0%   { background-position: 0% 0%, 100% 100%, 50% 50%; }
+    100% { background-position: 30% 20%, 70% 80%, 60% 40%; }
+  }
+
+  /* Grid overlay */
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    pointer-events: none;
+  }
+
+  /* Glitchy 404 number */
+  .glitch {
+    position: relative;
+    font-weight: 900;
+    font-size: clamp(8rem, 22vw, 18rem);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 40px rgba(99,102,241,0.3);
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    background: inherit;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    mix-blend-mode: screen;
+  }
+  .glitch::before {
+    text-shadow: -3px 0 #ec4899;
+    animation: glitch1 3s infinite linear alternate-reverse;
+  }
+  .glitch::after {
+    text-shadow: 3px 0 #22d3ee;
+    animation: glitch2 2.5s infinite linear alternate-reverse;
+  }
+  @keyframes glitch1 {
+    0%   { clip-path: inset(20% 0 60% 0); transform: translate(0); }
+    20%  { clip-path: inset(40% 0 40% 0); transform: translate(-3px, 1px); }
+    40%  { clip-path: inset(10% 0 70% 0); transform: translate(2px, -2px); }
+    60%  { clip-path: inset(80% 0 5% 0);  transform: translate(-2px, 2px); }
+    80%  { clip-path: inset(30% 0 50% 0); transform: translate(3px, 0); }
+    100% { clip-path: inset(60% 0 20% 0); transform: translate(0); }
+  }
+  @keyframes glitch2 {
+    0%   { clip-path: inset(70% 0 10% 0); transform: translate(0); }
+    25%  { clip-path: inset(15% 0 65% 0); transform: translate(2px, -1px); }
+    50%  { clip-path: inset(50% 0 30% 0); transform: translate(-2px, 2px); }
+    75%  { clip-path: inset(35% 0 45% 0); transform: translate(3px, 1px); }
+    100% { clip-path: inset(5% 0 85% 0);  transform: translate(-3px, -1px); }
+  }
+
+  /* Floating astronaut/orb */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.6;
+    animation: float 8s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50%      { transform: translateY(-30px) translateX(20px); }
+  }
+
+  /* Button shine */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transition: left 0.6s;
+  }
+  .btn-shine:hover::after { left: 100%; }
+
+  /* Stars */
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite ease-in-out;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.4); }
+  }
+
+  .fade-in {
+    animation: fadeUp 0.9s ease-out both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-anim"></div>
+<div class="grid-overlay"></div>
+
+<!-- Orbs -->
+<div class="orb" style="width:300px;height:300px;background:#6366f1;top:10%;left:5%;"></div>
+<div class="orb" style="width:250px;height:250px;background:#ec4899;bottom:10%;right:8%;animation-delay:-3s;"></div>
+
+<!-- Stars container -->
+<div id="stars" class="fixed inset-0 z-1 pointer-events-none"></div>
+
+<!-- Main content -->
+<main class="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 text-center">
+
+  <div class="fade-in mb-2">
+    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur text-sm text-slate-300">
+      <span class="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
+      Errore 404 · Pagina perduta nello spazio
+    </span>
+  </div>
+
+  <h1 class="glitch fade-in" data-text="404" style="animation-delay:0.1s">404</h1>
+
+  <h2 class="fade-in text-2xl md:text-4xl font-bold mt-4 mb-3 bg-gradient-to-r from-white via-indigo-200 to-pink-200 bg-clip-text text-transparent" style="animation-delay:0.2s">
+    Ops... questa pagina non esiste
+  </h2>
+
+  <p class="fade-in max-w-xl text-slate-400 text-base md:text-lg mb-8" style="animation-delay:0.3s">
+    L'indirizzo che hai cercato potrebbe essere stato spostato, rimosso o non essere mai esistito.
+    Torna alla home e continua l'esplorazione.
+  </p>
+
+  <div class="fade-in flex flex-wrap items-center justify-center gap-4" style="animation-delay:0.4s">
+    <a href="/" class="btn-shine inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-semibold shadow-lg shadow-indigo-500/30 hover:scale-105 transition-transform">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/>
+      </svg>
+      Torna alla Home
+    </a>
+    <a href="javascript:history.back()" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-semibold backdrop-blur hover:bg-white/10 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+      </svg>
+      Pagina precedente
+    </a>
+  </div>
+
+  <!-- Countdown -->
+  <div class="fade-in mt-12 text-sm text-slate-500" style="animation-delay:0.5s">
+    Reindirizzamento automatico alla home in <span id="count" class="text-indigo-300 font-bold">15</span>s
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="fixed bottom-4 left-0 right-0 z-10 text-center text-xs text-slate-500">
+  <a href="https://piboh.github.io/" class="hover:text-indigo-300 transition">piboh.github.io</a>
+</footer>
+
+<script>
+  // Generate twinkling stars
+  const starsContainer = document.getElementById('stars');
+  const starCount = 60;
+  for (let i = 0; i < starCount; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 2 + 1;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.animationDelay = (Math.random() * 3) + 's';
+    star.style.animationDuration = (2 + Math.random() * 3) + 's';
+    starsContainer.appendChild(star);
+  }
+
+  // Countdown + redirect
+  let seconds = 15;
+  const countEl = document.getElementById('count');
+  const timer = setInterval(() => {
+    seconds--;
+    if (countEl) countEl.textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(timer);
+      window.location.href = '/';
+    }
+  }, 1000);
+
+  // Pause countdown on user interaction
+  ['mousemove','keydown','touchstart'].forEach(ev => {
+    window.addEventListener(ev, () => {
+      clearInterval(timer);
+      const note = document.getElementById('count');
+      if (note && note.parentElement) {
+        note.parentElement.innerHTML = '⏸ Reindirizzamento automatico interrotto';
+      }
+    }, { once: true });
+  });
+</script>
+
+</body>
+</html>
