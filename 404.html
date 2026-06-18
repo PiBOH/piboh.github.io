@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>404 - Page Not Found</title>
+<title>404 OS 1.0.0k // ACCESS DENIED</title>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=VT323&amp;display=swap');
@@ -519,16 +519,16 @@
 <!-- GRUB -->
 <section id="grub-screen">
   <div class="grub-window">
-    <div class="grub-title">GNU GRUB 2.12-404 [BLACKOUT EDITION]</div>
+    <div class="grub-title">GNU GRUB 2.12-404</div>
     <div id="grub-options">
-      <div class="grub-option active" data-grub="0">*404 OS GNU/Linux 1.0.0k-opza (HAXED) - Linux 6.1.0-404os</div>
+      <div class="grub-option active" data-grub="0">*404 OS GNU/Linux 1.0.0k - Linux 6.1.0-404os</div>
       <div class="grub-option" data-grub="1"> Advanced options for 404 OS GNU/Linux</div>
       <div class="grub-option" data-grub="2"> 404 OS RECOVERY (root shell - no auth)</div>
       <div class="grub-option" data-grub="3"> Memory test + backdoor injection</div>
     </div>
     <div class="grub-footer">
       ↑↓ select • ENTER boot • c = console • e = edit<br>
-      <span id="grub-auto-line">Autobooting 404 OS 1.0.0k-opza in <span id="grub-count">4</span>s...</span>
+      <span id="grub-auto-line">Autobooting 404 OS 1.0.0k in <span id="grub-count">4</span>s...</span>
     </div>
 
     <div class="grub-cli" id="grub-cli">
@@ -560,7 +560,7 @@
 
     <div class="terminal-body">
       <div class="left-pane">
-        <div class="brand-line">404 OS 1.0.0k-opza • BLACKOUT BUILD • ACCESS DENIED</div>
+        <div class="brand-line">404 OS 1.0.0k • opzb</div>
         
         <div class="big-404" data-text="404">404</div>
         
@@ -591,7 +591,7 @@
       <aside class="right-pane">
         <div class="right-title">
           <span>OPERATOR LINKS</span>
-          <span class="os-badge">v1.0.0k-opza</span>
+          <span class="os-badge">v1.0.0k-opzb</span>
         </div>
 
         <div class="link-list">
@@ -610,7 +610,7 @@
         </div>
 
         <div class="mini-terminal">
-          <div class="mini-output" id="mini-output">404 OS root shell v1.0.0k-opza
+          <div class="mini-output" id="mini-output">404 OS root shell v1.0.0k
 Type "help" for available commands.
 </div>
           <div class="mini-input-wrap">
@@ -624,8 +624,8 @@ Type "help" for available commands.
 </main>
 
 <footer class="footer">
-  <span>404 OS 1.0.0k-opza • BLACKOUT • <a href="https://piboh.github.io/">piboh.github.io</a></span>
-  <span><a href="mailto:piboh.github@gmail.com">Contact mail: piboh.github@gmail.com</a></span>
+  <span>404 OS 1.0.0k • opzb • <a href="https://piboh.github.io/">piboh.github.io</a></span>
+  <span><a href="mailto:piboh.github@gmail.com">piboh.github@gmail.com</a></span>
 </footer>
 
 <script>
@@ -665,7 +665,7 @@ function drawMatrix() {
 setInterval(drawMatrix, 50);
 
 // ===== VERSION & LOGO =====
-const OS_VERSION = '1.0.0k-opza';
+const OS_VERSION = '1.0.0k-opzb';
 
 const logo = String.raw`  _  _    ___  _  _      ___  ____
  | || |  / _ \| || |    / _ \ / ___|
@@ -673,12 +673,12 @@ const logo = String.raw`  _  _    ___  _  _      ___  ____
  |__   _| |_| |__   _| | |_| | ___) |
     |_|  \___/   |_|    \___/ |____/
 
-404 OS v${OS_VERSION} [BLACKOUT] - KERNEL EXPLOITED`;
+404 OS v${OS_VERSION} [] - KERNEL EXPLOITED`;
 
 const bootLines = [
   ['info', 'Loading Linux 6.1.0-404os-amd64 ...'],
   ['info', 'Loading initial ramdisk ...'],
-  ['dim',  '[    0.000000] 404 OS 1.0.0k-opza BLACKOUT - Kernel 6.1.0-404os'],
+  ['dim',  '[    0.000000] 404 OS 1.0.0k-opzb - Kernel 6.1.0-404os'],
   ['dim',  '[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz root=UUID=404 ro quiet splash'],
   ['dim',  '[    0.000000] Bypassing Secure Boot... [OK]'],
   ['dim',  '[    0.000000] Injecting backdoor module...'],
@@ -709,10 +709,10 @@ const bootLines = [
   ['yellow', 'paginad[404]: falling back to 404 recovery shell'],
   ['ok',   'Starting 404 OS recovery shell...'],
   ['ok',   'Started 404 OS recovery shell.'],
-  ['info', '404 OS 1.0.0k-opza BLACKOUT - root shell acquired'],
+  ['info', '404 OS 1.0.0k  - root shell acquired'],
   ['green', 'piboh login: root'],
   ['green', 'Password: ****************'],
-  ['cyan',  'Welcome to 404 OS 1.0.0k-opza [BLACKOUT BUILD]'],
+  ['cyan',  'Welcome to 404 OS 1.0.0k-opzb],
   ['dim',   'System has been compromised. Type "help" for commands.']
 ];
 
@@ -799,7 +799,7 @@ function handleGrubCliCommand(raw) {
     closeGrubCli();
     setTimeout(startBoot, 300);
   } else if (cmd === 'version') {
-    grubCliAppend('404 OS ' + OS_VERSION + ' BLACKOUT - HAXED GRUB');
+    grubCliAppend('404 OS ' + OS_VERSION + '  - HAXED GRUB');
   } else if (cmd === 'linux') {
     grubCliAppend('linux /boot/vmlinuz-404os root=UUID=404 ro');
   } else if (cmd === 'initrd') {
@@ -998,9 +998,11 @@ const miniOutput = document.getElementById('mini-output');
 const miniInput = document.getElementById('mini-input');
 
 const miniCommands = {
-  help: 'Comandi:\n  help     mostra comandi\n  status   stato servizio\n  os       versione\n  path     path richiesto\n  reboot   riavvia\n  clear    pulisci',
+  help: 'Comandi:\n  help     mostra comandi\n  info     mostra ASCII art e versione\n  links    mostra i link dell\'autore\n  status   stato servizio\n  os       versione\n  path     path richiesto\n  reboot   riavvia\n  clear    pulisci',
+  info: ' _  _    ___  _  _      ___  ____\n | || |  / _ \\| || |    / _ \\ / ___|\n | || |_| | | | || |_  | | | |\\___ \\\n |__   _| |_| |__   _| | |_| | ___) |\n    |_|  \\___/   |_|    \\___/ |____/\n\n 404 OS v' + OS_VERSION,
+  links: 'Collegamenti autore:\n\n  Sito:    https://piboh.github.io/\n  Mail:    piboh.github@gmail.com\n  GitHub:  https://github.com/PiBOH',
   status: 'paginad.service → FAILED (404)',
-  os: '404 OS ' + OS_VERSION + ' BLACKOUT',
+  os: '404 OS ' + OS_VERSION + ' ',
   path: 'Requested: ' + (window.location.pathname || '/'),
   reboot: 'Rebooting...',
   clear: ''
