@@ -3,246 +3,911 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>404 — Pagina non trovata</title>
+<title>404</title>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <style>
-  html, body { height: 100%; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel2: #1c2128;
+    --bd: #30363d;
+    --bd2: #21262d;
+    --fg: #e6edf3;
+    --muted: #8b949e;
+    --dim: #6e7681;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --purple: #bc8cff;
+    --pink: #f778ba;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  html, body { min-height: 100%; }
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: #05060a;
-    color: #e6e8ef;
+    background: #020409;
+    color: var(--fg);
+    font-family: var(--font);
     overflow: hidden;
   }
 
-  /* Animated gradient background */
-  .bg-anim {
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 50% 42%, transparent 0 58%, rgba(0,0,0,.44) 100%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 4px);
+    mix-blend-mode: screen;
+    opacity: .85;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 81;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(88,166,255,.08), transparent);
+    height: 24vh;
+    transform: translateY(-30vh);
+    animation: scan 7s linear infinite;
+    opacity: .65;
+  }
+
+  @keyframes scan {
+    0% { transform: translateY(-30vh); }
+    100% { transform: translateY(115vh); }
+  }
+
+  .boot-bg {
     position: fixed;
     inset: 0;
     z-index: 0;
     background:
-      radial-gradient(circle at 20% 30%, rgba(99,102,241,0.35), transparent 45%),
-      radial-gradient(circle at 80% 70%, rgba(236,72,153,0.30), transparent 45%),
-      radial-gradient(circle at 50% 50%, rgba(34,211,238,0.20), transparent 55%),
-      #05060a;
-    animation: shift 18s ease-in-out infinite alternate;
-    filter: blur(0px);
-  }
-  @keyframes shift {
-    0%   { background-position: 0% 0%, 100% 100%, 50% 50%; }
-    100% { background-position: 30% 20%, 70% 80%, 60% 40%; }
+      radial-gradient(circle at 18% 18%, rgba(88,166,255,.12), transparent 28%),
+      radial-gradient(circle at 82% 78%, rgba(247,120,186,.08), transparent 30%),
+      linear-gradient(180deg, #020409 0%, #0d1117 100%);
   }
 
-  /* Grid overlay */
-  .grid-overlay {
+  .boot-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(88,166,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88,166,255,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(circle at center, black, transparent 78%);
+    -webkit-mask-image: radial-gradient(circle at center, black, transparent 78%);
+  }
+
+  #grub-screen,
+  #boot-screen {
     position: fixed;
     inset: 0;
-    z-index: 1;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    z-index: 30;
+    background: #020409;
+    font-family: var(--mono);
+    transition: opacity .45s ease, transform .45s ease;
+  }
+
+  #grub-screen.hide,
+  #boot-screen.hide {
+    opacity: 0;
+    transform: scale(.985);
     pointer-events: none;
   }
 
-  /* Glitchy 404 number */
-  .glitch {
+  #grub-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+  }
+
+  .grub-window {
+    width: min(820px, 94vw);
+    border: 2px solid #bfbfbf;
+    background: #050505;
+    color: #e8e8e8;
+    padding: 16px;
+    box-shadow: 0 0 0 1px #000, 0 22px 80px rgba(0,0,0,.7);
+  }
+
+  .grub-title {
+    text-align: center;
+    color: #cfcfcf;
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+
+  .grub-option {
+    padding: 6px 8px;
+    font-size: 13px;
+    color: #ddd;
+  }
+
+  .grub-option.active {
+    background: #cfcfcf;
+    color: #000;
+  }
+
+  .grub-footer {
+    border-top: 1px solid #777;
+    margin-top: 18px;
+    padding-top: 10px;
+    color: #b8b8b8;
+    font-size: 12px;
+    line-height: 1.65;
+  }
+
+  #boot-screen {
+    display: flex;
+    flex-direction: column;
+    padding: 18px 18px 70px;
+    overflow-y: auto;
+  }
+
+  .boot-logo {
+    color: var(--blue);
+    text-shadow: 0 0 10px rgba(88,166,255,.28);
+    margin-bottom: 10px;
+    white-space: pre;
+    font-size: clamp(10px, 1.6vw, 13px);
+    line-height: 1.08;
+  }
+
+  .debian-line {
+    opacity: 0;
+    transform: translateY(2px);
+    animation: lineIn .08s ease forwards;
+    font-size: clamp(11px, 1.7vw, 13px);
+    line-height: 1.55;
+    color: var(--fg);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  @keyframes lineIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .status {
+    display: inline-block;
+    width: 74px;
+    margin-right: 10px;
+    color: var(--green);
+    text-align: right;
+    text-shadow: 0 0 8px rgba(63,185,80,.35);
+  }
+
+  .status.warn { color: var(--yellow); text-shadow: 0 0 8px rgba(210,153,34,.28); }
+  .status.fail { color: var(--red); text-shadow: 0 0 8px rgba(248,81,73,.42); }
+  .status.info { color: var(--blue); text-shadow: 0 0 8px rgba(88,166,255,.35); }
+  .line-muted { color: var(--muted); }
+  .line-dim { color: var(--dim); }
+  .line-red { color: var(--red); }
+  .line-green { color: var(--green); }
+  .line-blue { color: var(--blue); }
+  .line-yellow { color: var(--yellow); }
+  .line-purple { color: var(--purple); }
+
+  .skip-boot {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 35;
+    border: 1px solid var(--bd);
+    background: rgba(22,27,34,.9);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 7px 13px;
+    font-size: 12px;
+    font-family: var(--mono);
+    cursor: pointer;
+    transition: all .16s ease;
+  }
+
+  .skip-boot:hover {
+    color: var(--fg);
+    border-color: var(--blue);
+    box-shadow: 0 0 18px rgba(88,166,255,.16);
+  }
+
+  .skip-boot.hide { opacity: 0; pointer-events: none; }
+
+  main {
     position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    padding: 34px 18px 70px;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    transition: opacity .75s ease, transform .75s ease;
+  }
+
+  main.ready {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .recovery-shell {
+    width: min(1080px, 96vw);
+    border: 1px solid var(--bd);
+    background: linear-gradient(180deg, rgba(22,27,34,.94), rgba(13,17,23,.94));
+    box-shadow: 0 28px 110px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.035);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .terminal-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--bd2);
+    background: rgba(22,27,34,.94);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .traffic { display: flex; gap: 7px; }
+  .traffic span { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .traffic .r { background: var(--red); box-shadow: 0 0 8px rgba(248,81,73,.45); }
+  .traffic .y { background: var(--yellow); box-shadow: 0 0 8px rgba(210,153,34,.35); }
+  .traffic .g { background: var(--green); box-shadow: 0 0 8px rgba(63,185,80,.35); }
+
+  .terminal-body {
+    display: grid;
+    grid-template-columns: 1.12fr .88fr;
+    gap: 0;
+  }
+
+  .left-pane, .right-pane { padding: clamp(16px, 3vw, 28px); }
+  .right-pane {
+    border-left: 1px solid var(--bd2);
+    background: rgba(13,17,23,.52);
+  }
+
+  .brand-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--blue);
+    font-family: var(--mono);
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .brand-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--blue);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(88,166,255,.65);
+    animation: pulse 1.8s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(88,166,255,.65); }
+    70% { box-shadow: 0 0 0 11px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  .big-404 {
+    font-family: var(--mono);
+    font-size: clamp(76px, 16vw, 164px);
+    line-height: .88;
+    letter-spacing: -.085em;
     font-weight: 900;
-    font-size: clamp(8rem, 22vw, 18rem);
-    line-height: 0.9;
-    letter-spacing: -0.05em;
-    background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+    color: transparent;
+    background: linear-gradient(180deg, #fff 0%, var(--blue) 50%, var(--pink) 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    color: transparent;
-    text-shadow: 0 0 40px rgba(99,102,241,0.3);
+    filter: drop-shadow(0 0 28px rgba(88,166,255,.18));
+    position: relative;
+    width: max-content;
+    max-width: 100%;
   }
-  .glitch::before, .glitch::after {
+
+  .big-404::before, .big-404::after {
     content: attr(data-text);
     position: absolute;
-    top: 0; left: 0;
-    width: 100%;
+    inset: 0;
+    color: transparent;
     background: inherit;
     -webkit-background-clip: text;
     background-clip: text;
-    color: transparent;
-    mix-blend-mode: screen;
-  }
-  .glitch::before {
-    text-shadow: -3px 0 #ec4899;
-    animation: glitch1 3s infinite linear alternate-reverse;
-  }
-  .glitch::after {
-    text-shadow: 3px 0 #22d3ee;
-    animation: glitch2 2.5s infinite linear alternate-reverse;
-  }
-  @keyframes glitch1 {
-    0%   { clip-path: inset(20% 0 60% 0); transform: translate(0); }
-    20%  { clip-path: inset(40% 0 40% 0); transform: translate(-3px, 1px); }
-    40%  { clip-path: inset(10% 0 70% 0); transform: translate(2px, -2px); }
-    60%  { clip-path: inset(80% 0 5% 0);  transform: translate(-2px, 2px); }
-    80%  { clip-path: inset(30% 0 50% 0); transform: translate(3px, 0); }
-    100% { clip-path: inset(60% 0 20% 0); transform: translate(0); }
-  }
-  @keyframes glitch2 {
-    0%   { clip-path: inset(70% 0 10% 0); transform: translate(0); }
-    25%  { clip-path: inset(15% 0 65% 0); transform: translate(2px, -1px); }
-    50%  { clip-path: inset(50% 0 30% 0); transform: translate(-2px, 2px); }
-    75%  { clip-path: inset(35% 0 45% 0); transform: translate(3px, 1px); }
-    100% { clip-path: inset(5% 0 85% 0);  transform: translate(-3px, -1px); }
-  }
-
-  /* Floating astronaut/orb */
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(40px);
-    opacity: 0.6;
-    animation: float 8s ease-in-out infinite;
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0) translateX(0); }
-    50%      { transform: translateY(-30px) translateX(20px); }
-  }
-
-  /* Button shine */
-  .btn-shine {
-    position: relative;
     overflow: hidden;
   }
-  .btn-shine::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-    transition: left 0.6s;
-  }
-  .btn-shine:hover::after { left: 100%; }
 
-  /* Stars */
-  .star {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-    animation: twinkle 3s infinite ease-in-out;
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.2; transform: scale(1); }
-    50%      { opacity: 1;   transform: scale(1.4); }
+  .big-404::before {
+    text-shadow: -3px 0 var(--red);
+    animation: glitchA 2.7s infinite linear alternate-reverse;
   }
 
-  .fade-in {
-    animation: fadeUp 0.9s ease-out both;
+  .big-404::after {
+    text-shadow: 3px 0 var(--blue);
+    animation: glitchB 2.1s infinite linear alternate-reverse;
   }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
+
+  @keyframes glitchA {
+    0% { clip-path: inset(10% 0 76% 0); transform: translate(-2px, 1px); }
+    28% { clip-path: inset(46% 0 34% 0); transform: translate(3px, -1px); }
+    56% { clip-path: inset(78% 0 6% 0); transform: translate(-1px, 2px); }
+    100% { clip-path: inset(28% 0 54% 0); transform: translate(0); }
+  }
+
+  @keyframes glitchB {
+    0% { clip-path: inset(70% 0 12% 0); transform: translate(2px, -1px); }
+    32% { clip-path: inset(12% 0 72% 0); transform: translate(-3px, 2px); }
+    66% { clip-path: inset(42% 0 38% 0); transform: translate(4px, 0); }
+    100% { clip-path: inset(84% 0 4% 0); transform: translate(-1px, -2px); }
+  }
+
+  h1 {
+    margin-top: 12px;
+    font-size: clamp(22px, 4vw, 38px);
+    line-height: 1.06;
+    letter-spacing: -.035em;
+    max-width: 720px;
+  }
+
+  .subtitle {
+    margin-top: 14px;
+    max-width: 650px;
+    color: var(--muted);
+    line-height: 1.65;
+    font-size: 14px;
+  }
+
+  .cmd-block {
+    margin-top: 18px;
+    border: 1px solid var(--bd2);
+    background: rgba(2,4,9,.36);
+    border-radius: 8px;
+    padding: 13px 14px;
+    font-family: var(--mono);
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.75;
+    overflow-x: auto;
+  }
+
+  .prompt { color: var(--green); }
+  .cmd { color: var(--fg); }
+  .err { color: var(--red); }
+  .ok { color: var(--green); }
+  .blue { color: var(--blue); }
+  .yellow { color: var(--yellow); }
+
+  .quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--bd);
+    border-radius: 8px;
+    background: var(--panel2);
+    color: var(--fg);
+    padding: 9px 13px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+
+  .action-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--blue);
+    background: #26313e;
+    box-shadow: 0 10px 28px rgba(0,0,0,.28);
+  }
+
+  .action-btn.primary {
+    color: var(--blue);
+    border-color: rgba(88,166,255,.35);
+    background: rgba(88,166,255,.1);
+  }
+
+  .right-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-family: var(--mono);
+    color: var(--fg);
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .os-badge {
+    color: var(--green);
+    border: 1px solid rgba(63,185,80,.32);
+    background: rgba(63,185,80,.08);
+    border-radius: 999px;
+    padding: 3px 9px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .link-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  .author-link {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--bd2);
+    border-radius: 9px;
+    background: rgba(22,27,34,.58);
+    color: var(--fg);
+    text-decoration: none;
+    transition: border-color .16s ease, background .16s ease, transform .16s ease;
+  }
+
+  .author-link:hover {
+    border-color: rgba(88,166,255,.38);
+    background: rgba(28,33,40,.92);
+    transform: translateX(2px);
+  }
+
+  .link-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    border: 1px solid var(--bd);
+    background: #0d1117;
+    color: var(--blue);
+    font-family: var(--mono);
+    font-weight: 800;
+  }
+
+  .link-main { font-size: 13px; font-weight: 700; }
+  .link-sub { font-size: 11px; color: var(--muted); margin-top: 1px; word-break: break-all; }
+
+  .mini-terminal {
+    margin-top: 14px;
+    border: 1px solid var(--bd2);
+    border-radius: 9px;
+    background: rgba(2,4,9,.46);
+    overflow: hidden;
+    font-family: var(--mono);
+  }
+
+  .mini-output {
+    min-height: 112px;
+    max-height: 170px;
+    overflow-y: auto;
+    padding: 10px;
+    font-size: 11px;
+    line-height: 1.55;
+    color: var(--muted);
+    white-space: pre-wrap;
+  }
+
+  .mini-input-wrap {
+    border-top: 1px solid var(--bd2);
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    gap: 7px;
+    font-size: 11px;
+  }
+
+  #mini-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    outline: none;
+    font: inherit;
+    caret-color: var(--green);
+  }
+
+  .footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    min-height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 14px;
+    border-top: 1px solid var(--bd2);
+    background: rgba(13,17,23,.86);
+    backdrop-filter: blur(8px);
+    color: var(--dim);
+    font-size: 11px;
+    font-family: var(--mono);
+  }
+
+  .footer a { color: var(--muted); text-decoration: none; }
+  .footer a:hover { color: var(--blue); }
+
+  ::-webkit-scrollbar { width: 7px; height: 7px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--bd); border-radius: 99px; }
+
+  @media (max-width: 860px) {
+    body { overflow: auto; }
+    .terminal-body { grid-template-columns: 1fr; }
+    .right-pane { border-left: 0; border-top: 1px solid var(--bd2); }
+    main { align-items: start; padding-top: 24px; }
+  }
+
+  @media (max-width: 540px) {
+    #boot-screen { padding: 12px 10px 64px; }
+    .status { width: 55px; margin-right: 6px; }
+    .terminal-topbar { font-size: 10px; }
+    .left-pane, .right-pane { padding: 16px; }
+    .footer { position: static; flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   }
 </style>
 </head>
 <body>
+<div class="boot-bg" aria-hidden="true"></div>
 
-<div class="bg-anim"></div>
-<div class="grid-overlay"></div>
-
-<!-- Orbs -->
-<div class="orb" style="width:300px;height:300px;background:#6366f1;top:10%;left:5%;"></div>
-<div class="orb" style="width:250px;height:250px;background:#ec4899;bottom:10%;right:8%;animation-delay:-3s;"></div>
-
-<!-- Stars container -->
-<div id="stars" class="fixed inset-0 z-1 pointer-events-none"></div>
-
-<!-- Main content -->
-<main class="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 text-center">
-
-  <div class="fade-in mb-2">
-    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur text-sm text-slate-300">
-      <span class="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
-      Errore 404 · Pagina perduta nello spazio
-    </span>
+<section id="grub-screen" aria-label="Bootloader PiBOH OS">
+  <div class="grub-window">
+    <div class="grub-title">GNU GRUB  version 2.12-piboh</div>
+    <div class="grub-option active">*PiBOH OS GNU/Linux, with Linux 6.1.0-piboh404-amd64</div>
+    <div class="grub-option"> Advanced options for PiBOH OS GNU/Linux</div>
+    <div class="grub-option"> PiBOH OS recovery mode (404 handler)</div>
+    <div class="grub-option"> Memory test (404 MB)</div>
+    <div class="grub-footer">
+      Use the ↑ and ↓ keys to select which entry is highlighted.<br>
+      Press enter to boot the selected OS, 'e' to edit the commands before booting or 'c' for a command-line.<br>
+      Booting <span style="color:#fff">PiBOH OS 1.0.0g-opzb-opzb</span> automatically in <span id="grub-count">3</span>s...
+    </div>
   </div>
+</section>
 
-  <h1 class="glitch fade-in" data-text="404" style="animation-delay:0.1s">404</h1>
+<section id="boot-screen" class="hide" aria-live="polite" aria-label="Sequenza di boot Debian-like PiBOH OS">
+  <pre class="boot-logo" id="boot-logo"></pre>
+  <div id="boot-log"></div>
+</section>
+<button id="skip-boot" class="skip-boot">skip boot</button>
 
-  <h2 class="fade-in text-2xl md:text-4xl font-bold mt-4 mb-3 bg-gradient-to-r from-white via-indigo-200 to-pink-200 bg-clip-text text-transparent" style="animation-delay:0.2s">
-    Ops... questa pagina non esiste
-  </h2>
+<main id="main-content">
+  <section class="recovery-shell" aria-label="Pagina 404 PiBOH OS recovery shell">
+    <div class="terminal-topbar">
+      <div class="traffic" aria-hidden="true"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div>piboh@piboh-os: /usr/share/nginx/html/404</div>
+      <div>tty404</div>
+    </div>
 
-  <p class="fade-in max-w-xl text-slate-400 text-base md:text-lg mb-8" style="animation-delay:0.3s">
-    L'indirizzo che hai cercato potrebbe essere stato spostato, rimosso o non essere mai esistito.
-    Torna alla home e continua l'esplorazione.
-  </p>
+    <div class="terminal-body">
+      <div class="left-pane">
+        <div class="brand-line"><span class="brand-dot"></span> PiBOH OS 1.0.0g-opzb-opzb · Debian-like recovery target</div>
+        <div class="big-404" data-text="404">404</div>
+        <h1>Boot completato, ma il file d'avvio della pagina non esiste.</h1>
+        <p class="subtitle">
+          Il sistema operativo <strong class="text-sky-300">PiBOH OS</strong> è partito correttamente, ma il servizio
+          <code>paginad.service</code> non ha trovato la rotta richiesta. Sei nella console di recupero della pagina 404.
+        </p>
 
-  <div class="fade-in flex flex-wrap items-center justify-center gap-4" style="animation-delay:0.4s">
-    <a href="/" class="btn-shine inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-semibold shadow-lg shadow-indigo-500/30 hover:scale-105 transition-transform">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/>
-      </svg>
-      Torna alla Home
-    </a>
-    <a href="javascript:history.back()" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-semibold backdrop-blur hover:bg-white/10 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
-      </svg>
-      Pagina precedente
-    </a>
-  </div>
+        <div class="cmd-block" aria-label="Diagnostica errore 404">
+<span class="prompt">root@piboh-os:~#</span> <span class="cmd">systemctl status paginad.service</span><br>
+<span class="err">× paginad.service - PiBOH OS page loader</span><br>
+  Loaded: loaded (/lib/systemd/system/paginad.service; enabled)<br>
+  Active: <span class="err">failed</span> (Result: exit-code) since now<br>
+  Process: 404 ExecStart=/usr/bin/paginad <span class="yellow">/var/www/requested-page</span><br>
+  Error: <span class="err">No such file or directory</span><br>
+<br>
+<span class="prompt">root@piboh-os:~#</span> <span class="cmd">journalctl -xeu paginad.service</span><br>
+<span class="blue">Hint:</span> torna alla home o contatta l'autore se pensi che il link debba esistere.
+        </div>
 
-  <!-- Countdown -->
-  <div class="fade-in mt-12 text-sm text-slate-500" style="animation-delay:0.5s">
-    Reindirizzamento automatico alla home in <span id="count" class="text-indigo-300 font-bold">15</span>s
-  </div>
+        <div class="quick-actions">
+          <a class="action-btn primary" href="https://piboh.github.io/">Torna al sito</a>
+          <a class="action-btn" href="javascript:history.back()">Indietro</a>
+          <a class="action-btn" href="mailto:piboh.github@gmail.com?subject=Segnalazione%20link%20404%20-%20piboh.github.io">Segnala via mail</a>
+          <button class="action-btn" type="button" id="reboot-btn">Riavvia boot</button>
+        </div>
+      </div>
 
+      <aside class="right-pane">
+        <div class="right-title">
+          <span>Collegamenti autore</span>
+          <span class="os-badge">PiBOH OS v1.0.0g-opzb-opzb</span>
+        </div>
+
+        <div class="link-list">
+          <a class="author-link" href="https://piboh.github.io/">
+            <span class="link-icon">WWW</span>
+            <span><span class="link-main">Sito ufficiale</span><span class="link-sub">https://piboh.github.io/</span></span>
+          </a>
+          <a class="author-link" href="mailto:piboh.github@gmail.com">
+            <span class="link-icon">@</span>
+            <span><span class="link-main">E-mail</span><span class="link-sub">piboh.github@gmail.com</span></span>
+          </a>
+          <a class="author-link" href="https://github.com/PiBOH">
+            <span class="link-icon">GH</span>
+            <span><span class="link-main">GitHub</span><span class="link-sub">github.com/PiBOH</span></span>
+          </a>
+          <a class="author-link" href="https://github.com/PiBOH/piboh.github.io">
+            <span class="link-icon">SRC</span>
+            <span><span class="link-main">Repository del sito</span><span class="link-sub">PiBOH/piboh.github.io</span></span>
+          </a>
+          <a class="author-link" href="https://code-learn1.vercel.app/">
+            <span class="link-icon">CL</span>
+            <span><span class="link-main">CodeLearn1 demo</span><span class="link-sub">code-learn1.vercel.app</span></span>
+          </a>
+          <a class="author-link" href="https://github.com/PiBOH/MCServerManagement">
+            <span class="link-icon">MC</span>
+            <span><span class="link-main">MCServerManagement</span><span class="link-sub">Gestione server Minecraft via API</span></span>
+          </a>
+          <a class="author-link" href="https://github.com/PiBOH98a">
+            <span class="link-icon">OLD</span>
+            <span><span class="link-main">Vecchio profilo</span><span class="link-sub">github.com/PiBOH98a</span></span>
+          </a>
+        </div>
+
+        <div class="mini-terminal" aria-label="Mini shell interattiva 404">
+          <div class="mini-output" id="mini-output">PiBOH OS recovery shell 1.0.0g-opzb-opzb
+Digita "help" per i comandi disponibili.
+</div>
+          <div class="mini-input-wrap">
+            <span class="prompt">piboh@404:~$</span>
+            <input id="mini-input" autocomplete="off" spellcheck="false" placeholder="help">
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
 </main>
 
-<!-- Footer -->
-<footer class="fixed bottom-4 left-0 right-0 z-10 text-center text-xs text-slate-500">
-  <a href="https://piboh.github.io/" class="hover:text-indigo-300 transition">piboh.github.io</a>
+<footer class="footer">
+  <span>PiBOH OS GNU/Linux 1.0.0g-opzb-opzb · 404 recovery target · Debian-like boot</span>
+  <span><a href="https://piboh.github.io/">piboh.github.io</a> · <a href="mailto:piboh.github@gmail.com">piboh.github@gmail.com</a></span>
 </footer>
 
 <script>
-  // Generate twinkling stars
-  const starsContainer = document.getElementById('stars');
-  const starCount = 60;
-  for (let i = 0; i < starCount; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    const size = Math.random() * 2 + 1;
-    star.style.width = size + 'px';
-    star.style.height = size + 'px';
-    star.style.top = Math.random() * 100 + '%';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.animationDelay = (Math.random() * 3) + 's';
-    star.style.animationDuration = (2 + Math.random() * 3) + 's';
-    starsContainer.appendChild(star);
+  const OS_VERSION = '1.0.0g-opzb';
+  const logo = String.raw` ____  _ ____   ____  _   _    ___  ____
+|  _ \(_) __ ) / __ \| | | |  / _ \/ ___|
+| |_) | |  _ \| |  | | |_| | | | | \___ \
+|  __/| | |_) | |__| |  _  | | |_| |___) |
+|_|   |_|____/ \____/|_| |_|  \___/|____/
+
+PiBOH OS GNU/Linux ${OS_VERSION} "404 Recovery" - Debian-like boot`;
+
+  const bootLines = [
+    ['info', 'Loading Linux 6.1.0-piboh404-amd64 ...'],
+    ['info', 'Loading initial ramdisk ...'],
+    ['dim',  '[    0.000000] Linux version 6.1.0-piboh404-amd64 (piboh@github) #1 SMP PREEMPT_DYNAMIC'],
+    ['dim',  '[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-piboh root=UUID=404 ro quiet splash'],
+    ['dim',  '[    0.000000] x86/fpu: Supporting XSAVE feature 0x001: x87 floating point registers'],
+    ['dim',  '[    0.004040] BIOS-provided physical RAM map: 404 MB available'],
+    ['dim',  '[    0.040400] ACPI: Early table checksum verification disabled'],
+    ['dim',  '[    0.070404] Kernel/User page tables isolation: enabled'],
+    ['ok',   'Started Journal Service.'],
+    ['ok',   'Mounted Huge Pages File System.'],
+    ['ok',   'Mounted POSIX Message Queue File System.'],
+    ['ok',   'Mounted Kernel Debug File System.'],
+    ['ok',   'Mounted Kernel Trace File System.'],
+    ['ok',   'Finished Create List of Static Device Nodes.'],
+    ['ok',   'Finished Load Kernel Module configfs.'],
+    ['ok',   'Finished Load Kernel Module drm.'],
+    ['ok',   'Finished Load Kernel Module fuse.'],
+    ['ok',   'Finished Remount Root and Kernel File Systems.'],
+    ['ok',   'Finished Apply Kernel Variables.'],
+    ['ok',   'Finished Coldplug All udev Devices.'],
+    ['ok',   'Started Rule-based Manager for Device Events and Files.'],
+    ['ok',   'Found device /dev/disk/by-uuid/PIBOH-404.'],
+    ['ok',   'Mounted /boot.'],
+    ['ok',   'Mounted /var/log.'],
+    ['ok',   'Reached target Local File Systems.'],
+    ['ok',   'Starting Raise network interfaces...'],
+    ['ok',   'Started ifup for wlan0.'],
+    ['ok',   'Started Network Name Resolution.'],
+    ['ok',   'Reached target Network.'],
+    ['ok',   'Reached target Network is Online.'],
+    ['ok',   'Starting OpenBSD Secure Shell server...'],
+    ['ok',   'Started OpenBSD Secure Shell server.'],
+    ['ok',   'Starting nginx - high performance web server...'],
+    ['ok',   'Started nginx - high performance web server.'],
+    ['ok',   'Starting PiBOH GitHub REST API sync daemon...'],
+    ['ok',   'Started PiBOH GitHub REST API sync daemon.'],
+    ['warn', 'Starting PiBOH profile cache warmer...'],
+    ['warn', 'profile-cache.service: cache cold, using fallback metadata.'],
+    ['ok',   'Started PiBOH profile cache warmer.'],
+    ['ok',   'Starting PiBOH OS display manager...'],
+    ['ok',   'Started PiBOH OS display manager.'],
+    ['info', 'Reached target Graphical Interface.'],
+    ['ok',   'Starting PiBOH page loader daemon...'],
+    ['fail', 'Failed to start PiBOH page loader daemon.'],
+    ['red',  'paginad.service: Main process exited, code=exited, status=404/NOTFOUND'],
+    ['red',  'paginad.service: Failed with result "exit-code".'],
+    ['yellow', 'paginad[404]: requested path was not found inside /var/www/piboh.github.io'],
+    ['yellow', 'paginad[404]: falling back to /404.html recovery target'],
+    ['ok',   'Starting PiBOH OS 404 recovery target...'],
+    ['ok',   'Started PiBOH OS 404 recovery target.'],
+    ['info', 'PiBOH OS GNU/Linux 1.0.0g-opzb piboh tty404'],
+    ['green', 'piboh login: recovery'],
+    ['green', 'Password: ********'],
+    ['green', 'Last login: now from 404.not-found.local'],
+    ['blue',  'Welcome to PiBOH OS 1.0.0g-opzb (GNU/Linux 6.1.0-piboh404-amd64 x86_64)'],
+    ['dim',   'Type "help" in the recovery shell for available commands.']
+  ];
+
+  const grubScreen = document.getElementById('grub-screen');
+  const bootScreen = document.getElementById('boot-screen');
+  const bootLogo = document.getElementById('boot-logo');
+  const bootLog = document.getElementById('boot-log');
+  const mainContent = document.getElementById('main-content');
+  const skipBoot = document.getElementById('skip-boot');
+  const grubCount = document.getElementById('grub-count');
+  let bootTimers = [];
+
+  function clearTimers() {
+    bootTimers.forEach(clearTimeout);
+    bootTimers = [];
   }
 
-  // Countdown + redirect
-  let seconds = 15;
-  const countEl = document.getElementById('count');
-  const timer = setInterval(() => {
-    seconds--;
-    if (countEl) countEl.textContent = seconds;
-    if (seconds <= 0) {
-      clearInterval(timer);
-      window.location.href = '/';
+  function statusMarkup(type) {
+    if (type === 'ok') return '<span class="status">[  OK  ]</span>';
+    if (type === 'fail') return '<span class="status fail">[FAILED]</span>';
+    if (type === 'warn') return '<span class="status warn">[ WARN ]</span>';
+    if (type === 'info') return '<span class="status info">[ INFO ]</span>';
+    return '<span class="status info">[ .... ]</span>';
+  }
+
+  function lineClass(type) {
+    if (type === 'red') return 'line-red';
+    if (type === 'green') return 'line-green';
+    if (type === 'blue') return 'line-blue';
+    if (type === 'yellow') return 'line-yellow';
+    if (type === 'dim') return 'line-dim';
+    return '';
+  }
+
+  function appendBootLine(type, text) {
+    const row = document.createElement('div');
+    row.className = 'debian-line ' + lineClass(type);
+    if (['ok', 'fail', 'warn', 'info'].includes(type)) {
+      row.innerHTML = statusMarkup(type) + escapeHtml(text);
+    } else {
+      row.textContent = text;
     }
-  }, 1000);
+    bootLog.appendChild(row);
+    bootScreen.scrollTop = bootScreen.scrollHeight;
+  }
 
-  // Pause countdown on user interaction
-  ['mousemove','keydown','touchstart'].forEach(ev => {
-    window.addEventListener(ev, () => {
-      clearInterval(timer);
-      const note = document.getElementById('count');
-      if (note && note.parentElement) {
-        note.parentElement.innerHTML = '⏸ Reindirizzamento automatico interrotto';
-      }
-    }, { once: true });
+  function finishBoot() {
+    clearTimers();
+    grubScreen.classList.add('hide');
+    bootScreen.classList.add('hide');
+    skipBoot.classList.add('hide');
+    mainContent.classList.add('ready');
+    document.body.style.overflow = 'auto';
+  }
+
+  function startBoot() {
+    clearTimers();
+    document.body.style.overflow = 'hidden';
+    mainContent.classList.remove('ready');
+    skipBoot.classList.remove('hide');
+    grubScreen.classList.remove('hide');
+    bootScreen.classList.add('hide');
+    bootLog.innerHTML = '';
+    bootLogo.textContent = logo;
+    let counter = 3;
+    grubCount.textContent = counter;
+
+    const interval = setInterval(() => {
+      counter -= 1;
+      grubCount.textContent = Math.max(counter, 0);
+      if (counter <= 0) clearInterval(interval);
+    }, 700);
+    bootTimers.push(interval);
+
+    bootTimers.push(setTimeout(() => {
+      grubScreen.classList.add('hide');
+      bootScreen.classList.remove('hide');
+      let delay = 0;
+      bootLines.forEach(([type, text], index) => {
+        const extra = type === 'fail' || type === 'red' ? 145 : 42;
+        delay += 58 + Math.random() * 42 + extra;
+        bootTimers.push(setTimeout(() => appendBootLine(type, text), delay));
+        if (index === bootLines.length - 1) {
+          bootTimers.push(setTimeout(finishBoot, delay + 900));
+        }
+      });
+    }, 2300));
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>'"]/g, char => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    }[char]));
+  }
+
+  skipBoot.addEventListener('click', finishBoot);
+  document.getElementById('reboot-btn').addEventListener('click', startBoot);
+
+  window.addEventListener('keydown', (event) => {
+    if ((event.key === 'Escape' || event.key === 'Enter') && !mainContent.classList.contains('ready')) {
+      finishBoot();
+    }
   });
-</script>
 
+  const miniOutput = document.getElementById('mini-output');
+  const miniInput = document.getElementById('mini-input');
+  const commands = {
+    help: [
+      'Comandi:',
+      '  help              mostra questo messaggio',
+      '  links             mostra i collegamenti autore',
+      '  status            stato paginad.service',
+      '  os-release        versione PiBOH OS',
+      '  mail              mostra la mail autore',
+      '  reboot            riavvia il boot finto',
+      '  clear             pulisce la shell'
+    ].join('\n'),
+    links: [
+      'Sito:  https://piboh.github.io/',
+      'Mail:  piboh.github@gmail.com',
+      'GitHub: https://github.com/PiBOH',
+      'Repo sito: https://github.com/PiBOH/piboh.github.io',
+      'CodeLearn1: https://code-learn1.vercel.app/'
+    ].join('\n'),
+    status: '× paginad.service - PiBOH OS page loader\n  Active: failed (Result: exit-code)\n  status=404/NOTFOUND\n  Recovery: /404.html active',
+    'os-release': 'PRETTY_NAME="PiBOH OS 1.0.0g-opzb"\nNAME="PiBOH OS"\nVERSION_ID="1.0.0g-opzb"\nID=piboh\nID_LIKE=debian',
+    mail: 'piboh.github@gmail.com'
+  };
+
+  miniInput.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    const raw = miniInput.value.trim();
+    miniInput.value = '';
+    if (!raw) return;
+    miniOutput.innerHTML += '\n' + '<span class="prompt">piboh@404:~$</span> ' + escapeHtml(raw) + '\n';
+    if (raw === 'clear') {
+      miniOutput.textContent = '';
+    } else if (raw === 'reboot') {
+      miniOutput.innerHTML += 'Riavvio boot PiBOH OS...\n';
+      startBoot();
+    } else {
+      miniOutput.innerHTML += escapeHtml(commands[raw] || `${raw}: comando non trovato. Prova "help".`) + '\n';
+    }
+    miniOutput.scrollTop = miniOutput.scrollHeight;
+  });
+
+  startBoot();
+</script>
 </body>
 </html>
