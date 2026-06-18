@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>404 - Page Not Found</title>
+<title>404 OS 1.0.0w // ACCESS DENIED</title>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=VT323&amp;display=swap');
@@ -30,17 +30,17 @@
     background: #000;
     color: var(--fg);
     font-family: 'VT323', monospace;
-    overflow: hidden;
+    overflow-x: hidden;
     image-rendering: pixelated;
   }
 
-  /* Matrix Rain Canvas */
+  /* Matrix Rain */
   #matrix {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     z-index: 0;
-    opacity: 0.18;
+    opacity: 0.15;
     pointer-events: none;
   }
 
@@ -64,7 +64,7 @@
     inset: 0;
     z-index: 2;
     pointer-events: none;
-    background-image: 
+    background-image:
       linear-gradient(rgba(255,255,255,0.02) 50%, transparent 50%);
     background-size: 100% 3px;
     animation: noise 0.15s steps(1) infinite;
@@ -81,191 +81,12 @@
     position: fixed;
     inset: 0;
     z-index: -1;
-    background: #000;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(0,255,65,0.05), transparent 50%),
+      radial-gradient(circle at 70% 80%, rgba(255,0,51,0.04), transparent 50%);
   }
 
-  #grub-screen,
-  #boot-screen {
-    position: fixed;
-    inset: 0;
-    z-index: 30;
-    background: rgba(0,0,0,0.92);
-    font-family: 'VT323', monospace;
-    transition: opacity .3s ease;
-  }
-
-  #grub-screen.hide,
-  #boot-screen.hide {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  #grub-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .grub-window {
-    width: min(860px, 94vw);
-    border: 3px solid var(--green);
-    background: #000;
-    color: var(--green);
-    padding: 18px 20px;
-    box-shadow: 0 0 0 6px #000, 0 0 60px rgba(0,255,65,0.3);
-    position: relative;
-  }
-
-  .grub-window::before {
-    content: "HACKED";
-    position: absolute;
-    top: -11px;
-    right: 18px;
-    background: #000;
-    color: var(--red);
-    font-size: 13px;
-    padding: 0 6px;
-    border: 2px solid var(--red);
-    letter-spacing: 2px;
-  }
-
-  .grub-title {
-    text-align: center;
-    color: var(--green);
-    margin-bottom: 14px;
-    font-size: 15px;
-    letter-spacing: 3px;
-    text-shadow: 0 0 10px var(--green);
-  }
-
-  .grub-option {
-    padding: 4px 10px;
-    font-size: 15px;
-    color: var(--green);
-    cursor: pointer;
-    border-left: 3px solid transparent;
-  }
-
-  .grub-option:hover:not(.active) {
-    background: rgba(0,255,65,0.08);
-    border-left-color: var(--green);
-  }
-
-  .grub-option.active {
-    background: var(--green);
-    color: #000;
-    border-left-color: #fff;
-    text-shadow: none;
-  }
-
-  .grub-footer {
-    border-top: 1px solid var(--green);
-    margin-top: 16px;
-    padding-top: 10px;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.4;
-  }
-
-  .grub-cli {
-    display: none;
-    margin-top: 14px;
-    border-top: 1px dashed var(--green);
-    padding-top: 10px;
-  }
-  .grub-cli.open { display: block; }
-
-  .grub-cli-output {
-    min-height: 80px;
-    max-height: 200px;
-    overflow-y: auto;
-    font-size: 14px;
-    line-height: 1.3;
-    color: #00cc33;
-    white-space: pre-wrap;
-    margin-bottom: 4px;
-    text-shadow: 0 0 4px var(--green);
-  }
-
-  .grub-cli-input-wrap {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-  }
-  .grub-cli-input-wrap span { color: var(--amber); }
-  #grub-cli-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--green);
-    outline: none;
-    font: inherit;
-    caret-color: var(--green);
-  }
-
-  #boot-screen {
-    padding: 16px 18px 60px;
-    overflow-y: auto;
-    font-size: 14px;
-  }
-
-  .boot-logo {
-    color: var(--green);
-    margin-bottom: 12px;
-    white-space: pre;
-    font-size: clamp(11px, 1.5vw, 14px);
-    line-height: 1.1;
-    text-shadow: 0 0 8px var(--green);
-  }
-
-  .debian-line {
-    opacity: 0;
-    animation: lineIn 60ms ease forwards;
-    font-size: 14px;
-    line-height: 1.35;
-    color: var(--fg);
-    white-space: pre-wrap;
-  }
-  @keyframes lineIn { to { opacity: 1; } }
-
-  .status {
-    display: inline-block;
-    width: 70px;
-    margin-right: 8px;
-    color: var(--green);
-    text-align: right;
-  }
-  .status.warn { color: var(--amber); }
-  .status.fail { color: var(--red); }
-  .status.info { color: var(--cyan); }
-
-  .line-red { color: var(--red); }
-  .line-green { color: var(--green); }
-  .line-cyan { color: var(--cyan); }
-  .line-amber { color: var(--amber); }
-  .line-dim { color: #006611; }
-
-  .skip-boot {
-    position: fixed;
-    right: 16px;
-    bottom: 16px;
-    z-index: 40;
-    border: 1px solid var(--green);
-    background: #000;
-    color: var(--green);
-    border-radius: 2px;
-    padding: 4px 12px;
-    font-size: 13px;
-    font-family: 'VT323', monospace;
-    cursor: pointer;
-    box-shadow: 0 0 0 1px #000;
-  }
-  .skip-boot:hover { background: var(--green); color: #000; }
-
-  .skip-boot.hide { display: none; }
-
+  /* MAIN */
   main {
     position: relative;
     z-index: 10;
@@ -275,19 +96,17 @@
     place-items: center;
     opacity: 0;
     transform: translateY(10px);
-    pointer-events: none;
-    transition: all 0.4s ease;
+    animation: fadeIn 0.6s 0.2s ease forwards;
   }
-  main.ready {
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
+
+  @keyframes fadeIn {
+    to { opacity: 1; transform: none; }
   }
 
   .recovery-shell {
     width: min(1100px, 96vw);
     border: 2px solid var(--green);
-    background: rgba(0, 0, 0, 0.95);
+    background: rgba(0, 0, 0, 0.92);
     box-shadow: 0 0 0 6px #000, 0 0 80px rgba(0,255,65,0.15);
     font-family: 'VT323', monospace;
   }
@@ -339,7 +158,7 @@
     line-height: 0.82;
     font-weight: 400;
     color: var(--green);
-    text-shadow: 
+    text-shadow:
       0 0 10px var(--green),
       3px 0 0 var(--red),
       -2px 0 0 var(--cyan);
@@ -397,6 +216,7 @@
     font-size: 15px;
     font-family: 'VT323', monospace;
     text-decoration: none;
+    cursor: pointer;
     transition: all 0.1s ease;
   }
   .action-btn:hover {
@@ -440,6 +260,7 @@
     color: var(--green);
     text-decoration: none;
     font-size: 15px;
+    transition: all 0.15s ease;
   }
   .author-link:hover {
     background: rgba(0,255,65,0.06);
@@ -482,6 +303,7 @@
     color: var(--green);
     outline: none;
     font: inherit;
+    caret-color: var(--green);
   }
 
   .footer {
@@ -516,40 +338,6 @@
 <div class="noise"></div>
 <div class="boot-bg"></div>
 
-<!-- GRUB -->
-<section id="grub-screen">
-  <div class="grub-window">
-    <div class="grub-title">GNU GRUB 2.12-404 [BLACKOUT EDITION]</div>
-    <div id="grub-options">
-      <div class="grub-option active" data-grub="0">*404 OS GNU/Linux 1.0.0k (HAXED) - Linux 6.1.0-404os</div>
-      <div class="grub-option" data-grub="1"> Advanced options for 404 OS GNU/Linux</div>
-      <div class="grub-option" data-grub="2"> 404 OS RECOVERY (root shell - no auth)</div>
-      <div class="grub-option" data-grub="3"> Memory test + backdoor injection</div>
-    </div>
-    <div class="grub-footer">
-      ↑↓ select • ENTER boot • c = console • e = edit<br>
-      <span id="grub-auto-line">Autobooting 404 OS 1.0.0k in <span id="grub-count">4</span>s...</span>
-    </div>
-
-    <div class="grub-cli" id="grub-cli">
-      <div class="grub-cli-output" id="grub-cli-output">GRUB console ready. Type "help".</div>
-      <div class="grub-cli-input-wrap">
-        <span>grub&gt;</span>
-        <input id="grub-cli-input" type="text" autocomplete="off">
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- BOOT SCREEN -->
-<section id="boot-screen" class="hide">
-  <pre class="boot-logo" id="boot-logo"></pre>
-  <div id="boot-log"></div>
-</section>
-
-<button id="skip-boot" class="skip-boot">SKIP BOOT</button>
-
-<!-- MAIN 404 PAGE -->
 <main id="main-content">
   <section class="recovery-shell">
     <div class="terminal-topbar">
@@ -560,12 +348,12 @@
 
     <div class="terminal-body">
       <div class="left-pane">
-        <div class="brand-line">404 OS 1.0.0k • BLACKOUT BUILD • ACCESS DENIED</div>
-        
+        <div class="brand-line">404 OS 1.0.0w · ACCESS DENIED</div>
+
         <div class="big-404" data-text="404">404</div>
-        
+
         <h1>BOOT COMPLETE. PAGE NOT FOUND IN KERNEL SPACE.</h1>
-        
+
         <p class="subtitle">
           404 OS kernel loaded. <span style="color:#ffaa00">paginad.service</span> failed to locate the requested resource.<br>
           You are now inside the recovery shell of a compromised web server.
@@ -584,14 +372,14 @@
         <div class="quick-actions">
           <a href="/" class="action-btn primary">RETURN TO HOME</a>
           <a href="javascript:history.back()" class="action-btn">GO BACK</a>
-          <button id="reboot-btn" class="action-btn">REBOOT SYSTEM</button>
+          <a href="mailto:piboh.github@gmail.com" class="action-btn">CONTACT ADMIN</a>
         </div>
       </div>
 
       <aside class="right-pane">
         <div class="right-title">
           <span>OPERATOR LINKS</span>
-          <span class="os-badge">v1.0.0k</span>
+          <span class="os-badge">v1.0.0w</span>
         </div>
 
         <div class="link-list">
@@ -610,7 +398,7 @@
         </div>
 
         <div class="mini-terminal">
-          <div class="mini-output" id="mini-output">404 OS root shell v1.0.0k
+          <div class="mini-output" id="mini-output">404 OS root shell v1.0.0w
 Type "help" for available commands.
 </div>
           <div class="mini-input-wrap">
@@ -624,7 +412,7 @@ Type "help" for available commands.
 </main>
 
 <footer class="footer">
-  <span>404 OS 1.0.0k • BLACKOUT • <a href="https://piboh.github.io/">piboh.github.io</a></span>
+  <span>404 OS 1.0.0w · <a href="https://piboh.github.io/">piboh.github.io</a></span>
   <span><a href="mailto:piboh.github@gmail.com">piboh.github@gmail.com</a></span>
 </footer>
 
@@ -648,14 +436,11 @@ let drops = Array(columns).fill(1);
 function drawMatrix() {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
   ctx.fillStyle = '#00ff41';
   ctx.font = fontSize + 'px VT323';
-  
   for (let i = 0; i < drops.length; i++) {
     const text = chars[Math.floor(Math.random() * chars.length)];
     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-    
     if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
       drops[i] = 0;
     }
@@ -664,347 +449,17 @@ function drawMatrix() {
 }
 setInterval(drawMatrix, 50);
 
-// ===== VERSION & LOGO =====
-const OS_VERSION = '1.0.0k-opzb';
-
-const logo = String.raw`  _  _    ___  _  _      ___  ____
- | || |  / _ \| || |    / _ \ / ___|
- | || |_| | | | || |_  | | | |\___ \
- |__   _| |_| |__   _| | |_| | ___) |
-    |_|  \___/   |_|    \___/ |____/
-
-404 OS v${OS_VERSION} [BLACKOUT] - KERNEL EXPLOITED`;
-
-const bootLines = [
-  ['info', 'Loading Linux 6.1.0-404os-amd64 ...'],
-  ['info', 'Loading initial ramdisk ...'],
-  ['dim',  '[    0.000000] 404 OS 1.0.0k BLACKOUT - Kernel 6.1.0-404os'],
-  ['dim',  '[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz root=UUID=404 ro quiet splash'],
-  ['dim',  '[    0.000000] Bypassing Secure Boot... [OK]'],
-  ['dim',  '[    0.000000] Injecting backdoor module...'],
-  ['dim',  '[    0.040404] ACPI: System compromised successfully'],
-  ['dim',  '[    0.070404] Kernel/User page tables isolation: disabled for speed'],
-  ['ok',   'Started Journal Service.'],
-  ['ok',   'Mounted /dev/sda1 as /'],
-  ['ok',   'Started udev Kernel Device Manager.'],
-  ['ok',   'Finished Load Kernel Modules.'],
-  ['ok',   'Finished Remount Root and Kernel File Systems.'],
-  ['ok',   'Finished Coldplug All udev Devices.'],
-  ['ok',   'Started Rule-based Manager for Device Events.'],
-  ['ok',   'Found device /dev/disk/by-uuid/ERR-404.'],
-  ['ok',   'Mounted /boot.'],
-  ['ok',   'Reached target Local File Systems.'],
-  ['ok',   'Started Raise network interfaces.'],
-  ['ok',   'Started Network Name Resolution.'],
-  ['ok',   'Reached target Network.'],
-  ['ok',   'Started OpenBSD Secure Shell server.'],
-  ['ok',   'Starting nginx - high performance web server...'],
-  ['ok',   'Started nginx.'],
-  ['ok',   'Starting 404 Payload Injector...'],
-  ['warn', '404 Payload Injector: no target page found.'],
-  ['fail', 'Failed to start 404 OS page loader daemon.'],
-  ['red',  'paginad.service: Main process exited, status=404/NOTFOUND'],
-  ['red',  'paginad.service: Failed with result "exit-code".'],
-  ['yellow', 'paginad[404]: path not found → ' + (window.location.pathname || '/unknown')],
-  ['yellow', 'paginad[404]: falling back to 404 recovery shell'],
-  ['ok',   'Starting 404 OS recovery shell...'],
-  ['ok',   'Started 404 OS recovery shell.'],
-  ['info', '404 OS 1.0.0k BLACKOUT - root shell acquired'],
-  ['green', 'piboh login: root'],
-  ['green', 'Password: ****************'],
-  ['cyan',  'Welcome to 404 OS 1.0.0k [BLACKOUT BUILD]'],
-  ['dim',   'System has been compromised. Type "help" for commands.']
-];
-
-// ===== ELEMENTS =====
-const grubScreen = document.getElementById('grub-screen');
-const bootScreen = document.getElementById('boot-screen');
-const bootLogo = document.getElementById('boot-logo');
-const bootLog = document.getElementById('boot-log');
-const mainContent = document.getElementById('main-content');
-const skipBoot = document.getElementById('skip-boot');
-const grubCount = document.getElementById('grub-count');
-const grubAutoLine = document.getElementById('grub-auto-line');
-const grubOptions = document.querySelectorAll('[data-grub]');
-const grubCli = document.getElementById('grub-cli');
-const grubCliOutput = document.getElementById('grub-cli-output');
-const grubCliInput = document.getElementById('grub-cli-input');
-
-let bootTimers = [];
-let grubIndex = 0;
-let grubAutoInterval = null;
-let grubAutoTimeout = null;
-let grubCliMode = false;
-
-function clearTimers() {
-  bootTimers.forEach(clearTimeout);
-  bootTimers = [];
-  stopGrubAuto();
-}
-
-function stopGrubAuto() {
-  if (grubAutoInterval) clearInterval(grubAutoInterval);
-  if (grubAutoTimeout) clearTimeout(grubAutoTimeout);
-  grubAutoInterval = null;
-  grubAutoTimeout = null;
-}
-
-function pauseGrubAuto() {
-  stopGrubAuto();
-  if (grubAutoLine) grubAutoLine.textContent = 'Autoboot paused. Press ENTER to boot.';
-}
-
-function updateGrubSelection() {
-  grubOptions.forEach((opt, i) => opt.classList.toggle('active', i === grubIndex));
-}
-
-function grubSelect(index) {
-  switch(index) {
-    case 0: runBootSequence(); break;
-    case 1: runBootSequence(); break;
-    case 2: runRecoveryBoot(); break;
-    case 3: runMemtest(); break;
-    default: runBootSequence();
-  }
-}
-
-function openGrubCli() {
-  pauseGrubAuto();
-  grubCliMode = true;
-  grubCli.classList.add('open');
-  grubCliInput.focus();
-}
-
-function closeGrubCli() {
-  grubCliMode = false;
-  grubCli.classList.remove('open');
-}
-
-function grubCliAppend(text) {
-  grubCliOutput.textContent += text + '\n';
-  grubCliOutput.scrollTop = grubCliOutput.scrollHeight;
-}
-
-function handleGrubCliCommand(raw) {
-  const cmd = raw.trim().toLowerCase();
-  grubCliAppend('grub> ' + raw);
-  if (!cmd) return;
-
-  if (cmd === 'help') {
-    grubCliAppend('boot  reboot  version  linux  initrd  ls  clear  exit');
-  } else if (cmd === 'boot') {
-    closeGrubCli();
-    setTimeout(() => grubSelect(grubIndex), 200);
-  } else if (cmd === 'reboot') {
-    closeGrubCli();
-    setTimeout(startBoot, 300);
-  } else if (cmd === 'version') {
-    grubCliAppend('404 OS ' + OS_VERSION + ' BLACKOUT - HAXED GRUB');
-  } else if (cmd === 'linux') {
-    grubCliAppend('linux /boot/vmlinuz-404os root=UUID=404 ro');
-  } else if (cmd === 'initrd') {
-    grubCliAppend('initrd /boot/initrd.img-404os');
-  } else if (cmd === 'ls') {
-    grubCliAppend('(hd0) (hd0,gpt1) (hd0,gpt2) (backdoor)');
-  } else if (cmd === 'clear') {
-    grubCliOutput.textContent = '';
-  } else if (cmd === 'exit') {
-    closeGrubCli();
-  } else {
-    grubCliAppend('unknown command: ' + cmd);
-  }
-}
-
-grubCliInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    const val = grubCliInput.value;
-    grubCliInput.value = '';
-    handleGrubCliCommand(val);
-  }
-});
-
-grubOptions.forEach((opt, i) => {
-  opt.addEventListener('click', () => {
-    pauseGrubAuto();
-    grubIndex = i;
-    updateGrubSelection();
-    setTimeout(() => grubSelect(i), 120);
-  });
-});
-
-// ===== BOOT HELPERS =====
-function statusMarkup(type) {
-  if (type === 'ok') return '<span class="status">[  OK  ]</span>';
-  if (type === 'fail') return '<span class="status fail">[FAILED]</span>';
-  if (type === 'warn') return '<span class="status warn">[ WARN ]</span>';
-  if (type === 'info') return '<span class="status info">[ INFO ]</span>';
-  return '<span class="status info">[ .... ]</span>';
-}
-
-function lineClass(type) {
-  if (type === 'red') return 'line-red';
-  if (type === 'green') return 'line-green';
-  if (type === 'cyan') return 'line-cyan';
-  if (type === 'amber') return 'line-amber';
-  if (type === 'dim') return 'line-dim';
-  return '';
-}
-
-function appendBootLine(type, text) {
-  const row = document.createElement('div');
-  row.className = 'debian-line ' + lineClass(type);
-  row.innerHTML = (['ok','fail','warn','info'].includes(type) ? statusMarkup(type) : '') + escapeHtml(text);
-  bootLog.appendChild(row);
-  bootScreen.scrollTop = bootScreen.scrollHeight;
-}
-
-function transitionToBoot() {
-  closeGrubCli();
-  grubScreen.classList.add('hide');
-  bootScreen.classList.remove('hide');
-}
-
-function finishBoot() {
-  clearTimers();
-  grubScreen.classList.add('hide');
-  bootScreen.classList.add('hide');
-  skipBoot.classList.add('hide');
-  mainContent.classList.add('ready');
-  document.body.style.overflow = 'auto';
-}
-
-function scheduleFinish(delay) {
-  bootTimers.push(setTimeout(finishBoot, delay));
-}
-
-function runBootSequence() {
-  transitionToBoot();
-  let delay = 0;
-  bootLines.forEach(([type, text]) => {
-    delay += 55 + Math.random() * 45;
-    if (type === 'fail' || type === 'red') delay += 90;
-    bootTimers.push(setTimeout(() => appendBootLine(type, text), delay));
-  });
-  scheduleFinish(delay + 850);
-}
-
-function runRecoveryBoot() {
-  transitionToBoot();
-  const lines = [
-    ['info', 'Loading Linux 6.1.0-404os (recovery) ...'],
-    ['dim',  '[    0.000000] Booting into recovery mode...'],
-    ['warn', 'Running with reduced security.'],
-    ['ok',   'Started emergency shell.'],
-    ['fail', 'Failed to start paginad.service.'],
-    ['red',  'paginad: 404 - resource not found'],
-    ['yellow', 'Injecting recovery payload...'],
-    ['ok',   'Recovery shell ready.'],
-    ['cyan', 'root@404os:~# whoami'],
-    ['green', 'root'],
-  ];
-  let delay = 0;
-  lines.forEach(([type, text]) => {
-    delay += 65 + Math.random() * 50;
-    bootTimers.push(setTimeout(() => appendBootLine(type, text), delay));
-  });
-  scheduleFinish(delay + 900);
-}
-
-function runMemtest() {
-  transitionToBoot();
-  const lines = [
-    ['info', '404 Memtest86+ v6.404 [HACKED]'],
-    ['dim',  'Scanning memory for secrets...'],
-    ['ok',   'Pass 1: 0x00000000 → OK'],
-    ['ok',   'Pass 2: 0xDEADBEEF → OK'],
-    ['warn', 'Pass 3: 0x40404040 → pattern mismatch'],
-    ['fail', 'ERROR @ 0x00000404: PAGE NOT FOUND'],
-    ['red',  'Memory leak detected. This page does not exist.'],
-    ['yellow', 'Even RAM says 404.'],
-    ['cyan', 'Test finished. Entering recovery...'],
-  ];
-  let delay = 0;
-  lines.forEach(([type, text]) => {
-    delay += 95 + Math.random() * 70;
-    bootTimers.push(setTimeout(() => appendBootLine(type, text), delay));
-  });
-  scheduleFinish(delay + 1100);
-}
-
-// ===== MAIN BOOT =====
-function startBoot() {
-  clearTimers();
-  document.body.style.overflow = 'hidden';
-  mainContent.classList.remove('ready');
-  skipBoot.classList.remove('hide');
-  grubScreen.classList.remove('hide');
-  bootScreen.classList.add('hide');
-  bootLog.innerHTML = '';
-  bootLogo.textContent = logo;
-  grubIndex = 0;
-  updateGrubSelection();
-
-  let counter = 4;
-  grubCount.textContent = counter;
-
-  grubAutoInterval = setInterval(() => {
-    counter--;
-    const c = document.getElementById('grub-count');
-    if (c) c.textContent = Math.max(counter, 0);
-    if (counter <= 0) {
-      stopGrubAuto();
-      grubSelect(grubIndex);
-    }
-  }, 1000);
-
-  grubAutoTimeout = setTimeout(() => {
-    stopGrubAuto();
-    grubSelect(grubIndex);
-  }, 4200);
-}
-
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
-// ===== EVENT LISTENERS =====
-skipBoot.addEventListener('click', finishBoot);
-document.getElementById('reboot-btn').addEventListener('click', startBoot);
-
-window.addEventListener('keydown', (e) => {
-  if (grubCliMode) return;
-
-  const isGrub = !grubScreen.classList.contains('hide');
-  const isMain = mainContent.classList.contains('ready');
-
-  if (isGrub) {
-    if (e.key === 'ArrowUp') { e.preventDefault(); pauseGrubAuto(); grubIndex = (grubIndex - 1 + grubOptions.length) % grubOptions.length; updateGrubSelection(); }
-    if (e.key === 'ArrowDown') { e.preventDefault(); pauseGrubAuto(); grubIndex = (grubIndex + 1) % grubOptions.length; updateGrubSelection(); }
-    if (e.key === 'Enter') { e.preventDefault(); pauseGrubAuto(); grubSelect(grubIndex); }
-    if (e.key.toLowerCase() === 'c') { e.preventDefault(); openGrubCli(); }
-    if (e.key.toLowerCase() === 'e') { 
-      e.preventDefault(); pauseGrubAuto(); openGrubCli(); 
-      grubCliAppend('Editing entry ' + grubIndex);
-    }
-    return;
-  }
-
-  if (!isMain && (e.key === 'Escape' || e.key === 'Enter')) finishBoot();
-});
-
 // ===== MINI SHELL =====
 const miniOutput = document.getElementById('mini-output');
 const miniInput = document.getElementById('mini-input');
 
 const miniCommands = {
-  help: 'Comandi:\n  help     mostra comandi\n  info     mostra ASCII art e versione\n  links    mostra i link dell\'autore\n  status   stato servizio\n  os       versione\n  path     path richiesto\n  reboot   riavvia\n  clear    pulisci',
-  info: ' _  _    ___  _  _      ___  ____\n | || |  / _ \\| || |    / _ \\ / ___|\n | || |_| | | | || |_  | | | |\\___ \\\n |__   _| |_| |__   _| | |_| | ___) |\n    |_|  \\___/   |_|    \\___/ |____/\n\n 404 OS v' + OS_VERSION + ' [BLACKOUT BUILD]',
+  help: 'Comandi:\n  help     mostra comandi\n  info     mostra ASCII art e versione\n  links    mostra i link dell\'autore\n  status   stato servizio\n  os       versione\n  path     path richiesto\n  clear    pulisci',
+  info: ' _  _    ___  _  _      ___  ____\n | || |  / _ \\| || |    / _ \\ / ___|\n | || |_| | | | || |_  | | | |\\___ \\\n |__   _| |_| |__   _| | |_| | ___) |\n    |_|  \\___/   |_|    \\___/ |____/\n\n 404 OS v1.0.0w',
   links: 'Collegamenti autore:\n\n  Sito:    https://piboh.github.io/\n  Mail:    piboh.github@gmail.com\n  GitHub:  https://github.com/PiBOH',
   status: 'paginad.service → FAILED (404)',
-  os: '404 OS ' + OS_VERSION + ' BLACKOUT',
+  os: '404 OS 1.0.0w',
   path: 'Requested: ' + (window.location.pathname || '/'),
-  reboot: 'Rebooting...',
   clear: ''
 };
 
@@ -1013,20 +468,18 @@ miniInput.addEventListener('keydown', (e) => {
   const cmd = miniInput.value.trim().toLowerCase();
   miniInput.value = '';
   miniOutput.innerHTML += '\n<span class="prompt">hax0r@blackhat:~$</span> ' + escapeHtml(cmd) + '\n';
-  
+
   if (cmd === 'clear') {
     miniOutput.textContent = '';
-  } else if (cmd === 'reboot') {
-    miniOutput.innerHTML += 'Rebooting 404 OS...\n';
-    startBoot();
   } else {
     miniOutput.innerHTML += escapeHtml(miniCommands[cmd] || 'command not found: ' + cmd) + '\n';
   }
   miniOutput.scrollTop = miniOutput.scrollHeight;
 });
 
-// ===== INIT =====
-startBoot();
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
 </script>
 </body>
 </html>
