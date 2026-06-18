@@ -519,9 +519,9 @@
 <!-- GRUB -->
 <section id="grub-screen">
   <div class="grub-window">
-    <div class="grub-title">GNU GRUB 2.12-404</div>
+    <div class="grub-title">GNU GRUB 2.12-404 [BLACKOUT EDITION]</div>
     <div id="grub-options">
-      <div class="grub-option active" data-grub="0">*404 OS GNU/Linux 1.0.0k - Linux 6.1.0-404os</div>
+      <div class="grub-option active" data-grub="0">*404 OS GNU/Linux 1.0.0k (HAXED) - Linux 6.1.0-404os</div>
       <div class="grub-option" data-grub="1"> Advanced options for 404 OS GNU/Linux</div>
       <div class="grub-option" data-grub="2"> 404 OS RECOVERY (root shell - no auth)</div>
       <div class="grub-option" data-grub="3"> Memory test + backdoor injection</div>
@@ -560,7 +560,7 @@
 
     <div class="terminal-body">
       <div class="left-pane">
-        <div class="brand-line">404 OS 1.0.0k • opzb</div>
+        <div class="brand-line">404 OS 1.0.0k • BLACKOUT BUILD • ACCESS DENIED</div>
         
         <div class="big-404" data-text="404">404</div>
         
@@ -591,7 +591,7 @@
       <aside class="right-pane">
         <div class="right-title">
           <span>OPERATOR LINKS</span>
-          <span class="os-badge">v1.0.0k-opzb</span>
+          <span class="os-badge">v1.0.0k</span>
         </div>
 
         <div class="link-list">
@@ -624,7 +624,7 @@ Type "help" for available commands.
 </main>
 
 <footer class="footer">
-  <span>404 OS 1.0.0k • opzb • <a href="https://piboh.github.io/">piboh.github.io</a></span>
+  <span>404 OS 1.0.0k • BLACKOUT • <a href="https://piboh.github.io/">piboh.github.io</a></span>
   <span><a href="mailto:piboh.github@gmail.com">piboh.github@gmail.com</a></span>
 </footer>
 
@@ -673,12 +673,12 @@ const logo = String.raw`  _  _    ___  _  _      ___  ____
  |__   _| |_| |__   _| | |_| | ___) |
     |_|  \___/   |_|    \___/ |____/
 
-404 OS v${OS_VERSION} [] - KERNEL EXPLOITED`;
+404 OS v${OS_VERSION} [BLACKOUT] - KERNEL EXPLOITED`;
 
 const bootLines = [
   ['info', 'Loading Linux 6.1.0-404os-amd64 ...'],
   ['info', 'Loading initial ramdisk ...'],
-  ['dim',  '[    0.000000] 404 OS 1.0.0k-opzb - Kernel 6.1.0-404os'],
+  ['dim',  '[    0.000000] 404 OS 1.0.0k BLACKOUT - Kernel 6.1.0-404os'],
   ['dim',  '[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz root=UUID=404 ro quiet splash'],
   ['dim',  '[    0.000000] Bypassing Secure Boot... [OK]'],
   ['dim',  '[    0.000000] Injecting backdoor module...'],
@@ -709,10 +709,10 @@ const bootLines = [
   ['yellow', 'paginad[404]: falling back to 404 recovery shell'],
   ['ok',   'Starting 404 OS recovery shell...'],
   ['ok',   'Started 404 OS recovery shell.'],
-  ['info', '404 OS 1.0.0k  - root shell acquired'],
+  ['info', '404 OS 1.0.0k BLACKOUT - root shell acquired'],
   ['green', 'piboh login: root'],
   ['green', 'Password: ****************'],
-  ['cyan',  'Welcome to 404 OS 1.0.0k-opzb],
+  ['cyan',  'Welcome to 404 OS 1.0.0k [BLACKOUT BUILD]'],
   ['dim',   'System has been compromised. Type "help" for commands.']
 ];
 
@@ -799,7 +799,7 @@ function handleGrubCliCommand(raw) {
     closeGrubCli();
     setTimeout(startBoot, 300);
   } else if (cmd === 'version') {
-    grubCliAppend('404 OS ' + OS_VERSION + '  - HAXED GRUB');
+    grubCliAppend('404 OS ' + OS_VERSION + ' BLACKOUT - HAXED GRUB');
   } else if (cmd === 'linux') {
     grubCliAppend('linux /boot/vmlinuz-404os root=UUID=404 ro');
   } else if (cmd === 'initrd') {
@@ -999,10 +999,10 @@ const miniInput = document.getElementById('mini-input');
 
 const miniCommands = {
   help: 'Comandi:\n  help     mostra comandi\n  info     mostra ASCII art e versione\n  links    mostra i link dell\'autore\n  status   stato servizio\n  os       versione\n  path     path richiesto\n  reboot   riavvia\n  clear    pulisci',
-  info: ' _  _    ___  _  _      ___  ____\n | || |  / _ \\| || |    / _ \\ / ___|\n | || |_| | | | || |_  | | | |\\___ \\\n |__   _| |_| |__   _| | |_| | ___) |\n    |_|  \\___/   |_|    \\___/ |____/\n\n 404 OS v' + OS_VERSION,
+  info: ' _  _    ___  _  _      ___  ____\n | || |  / _ \\| || |    / _ \\ / ___|\n | || |_| | | | || |_  | | | |\\___ \\\n |__   _| |_| |__   _| | |_| | ___) |\n    |_|  \\___/   |_|    \\___/ |____/\n\n 404 OS v' + OS_VERSION + ' [BLACKOUT BUILD]',
   links: 'Collegamenti autore:\n\n  Sito:    https://piboh.github.io/\n  Mail:    piboh.github@gmail.com\n  GitHub:  https://github.com/PiBOH',
   status: 'paginad.service → FAILED (404)',
-  os: '404 OS ' + OS_VERSION + ' ',
+  os: '404 OS ' + OS_VERSION + ' BLACKOUT',
   path: 'Requested: ' + (window.location.pathname || '/'),
   reboot: 'Rebooting...',
   clear: ''
