@@ -19,6 +19,12 @@ Il codice contenuto in questo repository è proprietario. Non è consentito alcu
 Questo repository serve solo ad "hostare" il [mio sito](https://piboh.github.io)
 ***
 > versione files sito:
->
+> 
 > 1.0.4b-opzb
+>
+>.
+> 
+> Versione 404.html
+> 
+> 1.0.0w-opzb
 ***
