@@ -2,20 +2,20 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GitHubProvider } from "./context/GitHubContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import Navbar from "./components/Navbar";
+import SyncBanner from "./components/SyncBanner";
 import Hero from "./components/Hero";
 import TabsContent from "./components/TabsContent";
 import Footer from "./components/Footer";
-import SyncBadge from "./components/SyncBadge";
 import NotFound from "./pages/NotFound";
 
 function HomePage() {
   return (
     <>
       <Navbar />
+      <SyncBanner />
       <Hero />
       <TabsContent />
       <Footer />
-      <SyncBadge />
     </>
   );
 }

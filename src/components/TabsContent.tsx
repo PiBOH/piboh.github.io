@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, Star, GitFork, Link2, ExternalLink, Calendar, Users, Code2, Smartphone, Gamepad2, Globe, Terminal, Palette } from "lucide-react";
+import { Search, X, Star, GitFork, Link2, ExternalLink, Code2, Smartphone, Gamepad2, Globe, Terminal, Palette } from "lucide-react";
 import { useGitHub } from "../context/GitHubContext";
 import { languageColors } from "../context/GitHubContext";
 import { useLang } from "../context/LanguageContext";
@@ -35,15 +35,13 @@ const skillCategories = [
 ];
 
 export default function TabsContent() {
-  const { repos, issues, orgs, user, reposLoading, issuesLoading, orgsLoading, error, errorType, refreshOrgs } = useGitHub();
+  const { repos, issues, orgs, user, reposLoading, issuesLoading, orgsLoading, refreshOrgs } = useGitHub();
   const { t } = useLang();
   const [activeTab, setActiveTab] = useState<"about" | "repos" | "issues" | "orgs">("about");
 
   const handleTabChange = (tab: "about" | "repos" | "issues" | "orgs") => {
     setActiveTab(tab);
-    if (tab === "orgs") {
-      refreshOrgs();
-    }
+    if (tab === "orgs") refreshOrgs();
   };
 
   // Repo filters
@@ -60,7 +58,6 @@ export default function TabsContent() {
   const allLanguages = Array.from(new Set(repos.map((p) => p.language).filter(Boolean))).sort() as string[];
   const getLangColor = (lang: string | null) => languageColors[lang || "null"] || "#8b949e";
 
-  // Filter repos
   let filteredRepos = [...repos];
   if (repoFilter === "source") filteredRepos = filteredRepos.filter((r) => !r.fork);
   else if (repoFilter === "fork") filteredRepos = filteredRepos.filter((r) => r.fork);
@@ -73,7 +70,6 @@ export default function TabsContent() {
   else if (repoSort === "name") filteredRepos.sort((a, b) => a.name.localeCompare(b.name));
   else filteredRepos.sort((a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime());
 
-  // Filter issues
   let filteredIssues = [...issues];
   if (issueFilter === "open") filteredIssues = filteredIssues.filter((i) => i.state === "open");
   else if (issueFilter === "closed") filteredIssues = filteredIssues.filter((i) => i.state === "closed");
@@ -83,7 +79,6 @@ export default function TabsContent() {
   }
   if (issueSort === "updated") filteredIssues.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  // Language stats
   const langStats = repos.reduce((acc, p) => { acc[p.language || "Other"] = (acc[p.language || "Other"] || 0) + 1; return acc; }, {} as Record<string, number>);
   const sortedLangs = Object.entries(langStats).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const totalLangs = sortedLangs.reduce((s, [, c]) => s + c, 0) || 1;
@@ -98,37 +93,13 @@ export default function TabsContent() {
   return (
     <section className="px-4 py-2 md:py-4">
       <div className="max-w-6xl mx-auto">
-        {/* Error banner */}
-        {error && errorType === "rate_limit" && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 px-4 py-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center gap-3">
-            <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" className="text-amber-400 shrink-0"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.39c.66 1.235-.23 2.813-1.637 2.813H2.012C.605 15.25-.285 13.672.376 12.437zM8 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-.75-7.25v4.5a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-1.5 0z"/></svg>
-            <p className="text-amber-300 text-xs md:text-sm">{error}</p>
-          </motion.div>
-        )}
-        {error && errorType === "network" && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3">
-            <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" className="text-red-400 shrink-0"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.39c.66 1.235-.23 2.813-1.637 2.813H2.012C.605 15.25-.285 13.672.376 12.437zM8 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-.75-7.25v4.5a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-1.5 0z"/></svg>
-            <p className="text-red-300 text-xs md:text-sm">{error}</p>
-          </motion.div>
-        )}
-
-        {/* Tabs */}
         <div className="flex items-center gap-1 border-b border-white/[0.08] mb-6 overflow-x-auto">
           {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => handleTabChange(tab.key)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap rounded-t-lg transition-colors relative ${
-                activeTab === tab.key ? "text-white" : "text-gray-500 hover:text-gray-300"
-              }`}
-            >
+            <button key={tab.key} onClick={() => handleTabChange(tab.key)}
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap rounded-t-lg transition-colors relative ${activeTab === tab.key ? "text-white" : "text-gray-500 hover:text-gray-300"}`}>
               {tab.label}
               {tab.count !== null && (
-                <span className={`px-1.5 py-0.5 text-[11px] rounded-full border ${
-                  activeTab === tab.key ? "bg-white/10 text-gray-300 border-white/10" : "bg-white/5 text-gray-600 border-white/5"
-                }`}>
-                  {tab.count}
-                </span>
+                <span className={`px-1.5 py-0.5 text-[11px] rounded-full border ${activeTab === tab.key ? "bg-white/10 text-gray-300 border-white/10" : "bg-white/5 text-gray-600 border-white/5"}`}>{tab.count}</span>
               )}
               {activeTab === tab.key && <motion.div layoutId="tab-active" className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-500" />}
             </button>
@@ -136,7 +107,6 @@ export default function TabsContent() {
         </div>
 
         <AnimatePresence mode="wait">
-          {/* ABOUT TAB */}
           {activeTab === "about" && (
             <motion.div key="about" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
@@ -146,7 +116,7 @@ export default function TabsContent() {
                   <p className="text-gray-400 text-sm leading-relaxed">{t.about.p2}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  {skillCategories.map((s, i) => (
+                  {skillCategories.map((s) => (
                     <div key={s.title} className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 hover:bg-white/[0.06] transition-all">
                       <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${s.bg} flex items-center justify-center mb-2`}>
                         <s.icon size={18} className={s.color} />
@@ -161,9 +131,7 @@ export default function TabsContent() {
               <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6">
                 <h3 className="text-lg font-semibold text-white mb-5">{t.skills.distribution}</h3>
                 {reposLoading && repos.length === 0 ? (
-                  <div className="space-y-3">
-                    {[1, 2, 3, 4].map((i) => <div key={i} className="h-6 bg-white/5 rounded-lg animate-pulse" />)}
-                  </div>
+                  <div className="space-y-3">{[1, 2, 3, 4].map((i) => <div key={i} className="h-6 bg-white/5 rounded-lg animate-pulse" />)}</div>
                 ) : sortedLangs.length > 0 ? (
                   <div className="space-y-3">
                     {sortedLangs.map(([lang, count]) => {
@@ -182,14 +150,11 @@ export default function TabsContent() {
                       );
                     })}
                   </div>
-                ) : (
-                  <p className="text-gray-600 text-sm">{t.lang === "it" ? "Nessun dato disponibile." : "No data available."}</p>
-                )}
+                ) : null}
               </div>
             </motion.div>
           )}
 
-          {/* REPOS TAB */}
           {activeTab === "repos" && (
             <motion.div key="repos" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
               <div className="flex flex-col md:flex-row gap-3 mb-5">
@@ -238,22 +203,18 @@ export default function TabsContent() {
                         </div>
                         <span className="text-[10px] px-1.5 py-0.5 border border-white/10 rounded-full text-gray-600 shrink-0">{project.private ? "Private" : "Public"}</span>
                       </div>
-
                       {project.homepage && (
                         <a href={project.homepage} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-cyan-400/70 hover:text-cyan-300 mb-2 transition-colors">
                           <Link2 size={10} /><span className="truncate max-w-[200px]">{cleanUrl(project.homepage)}</span>
                         </a>
                       )}
-
                       <p className="text-gray-500 text-xs mb-3 line-clamp-2">{project.description || "No description."}</p>
-
                       <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-[11px] text-gray-600">
                         {project.language && <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: getLangColor(project.language) }} />{project.language}</span>}
                         {project.stargazers_count ? <span className="flex items-center gap-0.5"><Star size={11} />{fmt(project.stargazers_count)}</span> : null}
                         {project.forks_count ? <span className="flex items-center gap-0.5"><GitFork size={11} />{fmt(project.forks_count)}</span> : null}
                         <span>{ago(project.updated_at)}</span>
                       </div>
-
                       {project.topics.length > 0 && (
                         <div className="mt-2.5 flex flex-wrap gap-1">
                           {project.topics.slice(0, 3).map((topic) => (
@@ -265,23 +226,10 @@ export default function TabsContent() {
                   ))}
                 </div>
               )}
-
-              {filteredRepos.length === 0 && !reposLoading && (
-                <div className="text-center py-12">
-                  {error && repos.length === 0 ? (
-                    <div className="space-y-2">
-                      <p className="text-red-400 text-sm">{error}</p>
-                      <p className="text-gray-600 text-xs">{t.lang === "it" ? "Prova a ricaricare la pagina tra qualche minuto." : "Try reloading the page in a few minutes."}</p>
-                    </div>
-                  ) : (
-                    <p className="text-gray-600 text-sm">{t.projects.none}</p>
-                  )}
-                </div>
-              )}
+              {filteredRepos.length === 0 && !reposLoading && <div className="text-center py-12"><p className="text-gray-600 text-sm">{t.projects.none}</p></div>}
             </motion.div>
           )}
 
-          {/* ISSUES TAB */}
           {activeTab === "issues" && (
             <motion.div key="issues" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
               <div className="flex flex-col md:flex-row gap-3 mb-5">
@@ -337,23 +285,10 @@ export default function TabsContent() {
                   })}
                 </div>
               )}
-
-              {filteredIssues.length === 0 && !issuesLoading && (
-                <div className="text-center py-12">
-                  {error && issues.length === 0 ? (
-                    <div className="space-y-2">
-                      <p className="text-red-400 text-sm">{error}</p>
-                      <p className="text-gray-600 text-xs">{t.lang === "it" ? "Le issue potrebbero non essere disponibili a causa del rate limit API." : "Issues may not be available due to API rate limiting."}</p>
-                    </div>
-                  ) : (
-                    <p className="text-gray-600 text-sm">{t.issues.none}</p>
-                  )}
-                </div>
-              )}
+              {filteredIssues.length === 0 && !issuesLoading && <div className="text-center py-12"><p className="text-gray-600 text-sm">{t.issues.none}</p></div>}
             </motion.div>
           )}
 
-          {/* ORGS TAB */}
           {activeTab === "orgs" && (
             <motion.div key="orgs" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
               {orgsLoading && orgs.length === 0 ? (
@@ -361,16 +296,7 @@ export default function TabsContent() {
                   {[1, 2, 3].map((i) => <div key={i} className="h-28 bg-white/5 rounded-xl animate-pulse" />)}
                 </div>
               ) : orgs.length === 0 ? (
-                <div className="text-center py-12">
-                  {error ? (
-                    <div className="space-y-2">
-                      <p className="text-red-400 text-sm">{error}</p>
-                      <p className="text-gray-600 text-xs">{t.lang === "it" ? "Impossibile caricare le organizzazioni." : "Unable to load organizations."}</p>
-                    </div>
-                  ) : (
-                    <p className="text-gray-600 text-sm">{t.orgs.none}</p>
-                  )}
-                </div>
+                <div className="text-center py-12"><p className="text-gray-600 text-sm">{t.orgs.none}</p></div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {orgs.map((org, index) => (

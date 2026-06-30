@@ -18,7 +18,7 @@ export default function Footer() {
             <a href={user?.html_url} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-all">
               <Github size={16} />
             </a>
-            <p className="text-gray-700 text-[10px] md:text-xs font-mono">v2.0.6-design-opza</p>
+            <p className="text-gray-700 text-[10px] md:text-xs font-mono">v2.0.7-design-opza</p>
           </div>
         </div>
       </div>
