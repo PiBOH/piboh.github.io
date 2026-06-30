@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Github, MapPin, Link2, Users, FolderGit, Calendar } from "lucide-react";
+import { MapPin, Link2, Users, FolderGit, Calendar } from "lucide-react";
 import { useGitHub } from "../context/GitHubContext";
 import { useLang } from "../context/LanguageContext";
 
@@ -38,7 +38,7 @@ export default function Hero() {
 
             <p className="text-gray-400 text-sm md:text-[15px] mb-4 max-w-xl leading-relaxed">{u?.bio}</p>
 
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500 mb-4">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500">
               {u?.location && (
                 <span className="flex items-center gap-1"><MapPin size={14} />{u.location}</span>
               )}
@@ -48,11 +48,6 @@ export default function Hero() {
                 <span className="flex items-center gap-1"><Calendar size={14} />{t.lang === "it" ? "Dal" : "Since"} {joinYear}</span>
               )}
             </div>
-
-            <a href={u?.html_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white text-sm transition-all hover:scale-105">
-              <Github size={16} />
-              <span>GitHub</span>
-            </a>
           </motion.div>
         </div>
       </div>
