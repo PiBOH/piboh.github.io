@@ -83,11 +83,16 @@ export default function TabsContent() {
   const sortedLangs = Object.entries(langStats).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const totalLangs = sortedLangs.reduce((s, [, c]) => s + c, 0) || 1;
 
+  const tabCount = (loading: boolean, count: number) => {
+    if (loading && count === 0) return "?";
+    return count;
+  };
+
   const tabs = [
     { key: "about" as const, label: t.nav.about, count: null },
-    { key: "repos" as const, label: t.nav.projects, count: repos.length },
-    { key: "issues" as const, label: t.nav.issues, count: issues.length },
-    { key: "orgs" as const, label: t.nav.orgs, count: orgs.length },
+    { key: "repos" as const, label: t.nav.projects, count: tabCount(reposLoading, repos.length) },
+    { key: "issues" as const, label: t.nav.issues, count: tabCount(issuesLoading, issues.length) },
+    { key: "orgs" as const, label: t.nav.orgs, count: tabCount(orgsLoading, orgs.length) },
   ];
 
   return (
