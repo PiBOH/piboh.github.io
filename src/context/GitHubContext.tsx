@@ -53,8 +53,6 @@ export interface Issue {
   labels: { name: string; color: string }[];
 }
 
-export type SyncStatus = "syncing" | "live" | "cache" | "error";
-
 interface GitHubState {
   user: UserInfo | null;
   repos: Project[];
@@ -64,9 +62,7 @@ interface GitHubState {
   reposLoading: boolean;
   issuesLoading: boolean;
   orgsLoading: boolean;
-  syncStatus: SyncStatus;
   error: string | null;
-  errorType: "rate_limit" | "network" | "not_found" | "other" | null;
   lastUpdated: Date | null;
   refreshOrgs: () => Promise<void>;
 }
@@ -86,39 +82,6 @@ const defaultUser: UserInfo = {
   public_repos: 27, following: 5, created_at: "2026-06-07",
 };
 
-const CACHE_KEY = "piboh-portfolio-cache";
-const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-
-interface CacheData {
-  user?: UserInfo;
-  repos?: Project[];
-  issues?: Issue[];
-  orgs?: Org[];
-  timestamp: number;
-}
-
-function loadCache(): CacheData | null {
-  try {
-    const raw = localStorage.getItem(CACHE_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw) as CacheData;
-    if (Date.now() - data.timestamp > CACHE_TTL) return null;
-    return data;
-  } catch {
-    return null;
-  }
-}
-
-function saveCache(data: Partial<CacheData>) {
-  try {
-    const existing = loadCache() || { timestamp: Date.now() };
-    const merged = { ...existing, ...data, timestamp: Date.now() };
-    localStorage.setItem(CACHE_KEY, JSON.stringify(merged));
-  } catch {
-    // storage full or private mode
-  }
-}
-
 const GitHubContext = createContext<GitHubState | null>(null);
 
 export function useGitHub() {
@@ -127,26 +90,9 @@ export function useGitHub() {
   return ctx;
 }
 
-function classifyError(status: number, message: string): { type: GitHubState["errorType"]; msg: string } {
-  if (status === 403 || message.includes("rate limit") || message.includes("API rate")) {
-    return { type: "rate_limit", msg: "API Rate Limit raggiunto. I dati mostrati provengono dalla cache." };
-  }
-  if (status === 404) {
-    return { type: "not_found", msg: "Utente o risorsa non trovata su GitHub." };
-  }
-  if (status === 0 || message.includes("fetch") || message.includes("network") || message.includes("Failed to fetch")) {
-    return { type: "network", msg: "Errore di rete. Verifica la connessione internet." };
-  }
-  return { type: "other", msg: `Errore API (${status}): ${message}` };
-}
-
 async function fetchJson(url: string): Promise<any> {
   const res = await fetch(url, { headers: { Accept: "application/vnd.github.v3+json" } });
-  if (!res.ok) {
-    const err = new Error(`HTTP ${res.status}`);
-    (err as any).status = res.status;
-    throw err;
-  }
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
@@ -199,119 +145,63 @@ async function fetchIssues(): Promise<Issue[]> {
 }
 
 export function GitHubProvider({ children }: { children: ReactNode }) {
-  const cache = loadCache();
-
-  const [user, setUser] = useState<UserInfo>(cache?.user || defaultUser);
-  const [repos, setRepos] = useState<Project[]>(cache?.repos || []);
-  const [orgs, setOrgs] = useState<Org[]>(cache?.orgs || []);
-  const [issues, setIssues] = useState<Issue[]>(cache?.issues || []);
-  const [userLoading, setUserLoading] = useState(!cache?.user);
-  const [reposLoading, setReposLoading] = useState(!cache?.repos);
+  const [user, setUser] = useState<UserInfo>(defaultUser);
+  const [repos, setRepos] = useState<Project[]>([]);
+  const [orgs, setOrgs] = useState<Org[]>([]);
+  const [issues, setIssues] = useState<Issue[]>([]);
+  const [userLoading, setUserLoading] = useState(true);
+  const [reposLoading, setReposLoading] = useState(true);
   const [orgsLoading, setOrgsLoading] = useState(false);
-  const [issuesLoading, setIssuesLoading] = useState(!cache?.issues);
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>("syncing");
+  const [issuesLoading, setIssuesLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [errorType, setErrorType] = useState<GitHubState["errorType"]>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(cache ? new Date(cache.timestamp) : null);
-
-  const handleError = useCallback((err: any, fallbackCacheKey: keyof CacheData, setter: (v: any) => void) => {
-    const status = err?.status || 0;
-    const classified = classifyError(status, err?.message || String(err));
-    setError(classified.msg);
-    setErrorType(classified.type);
-
-    // Try cache fallback
-    const c = loadCache();
-    if (c && c[fallbackCacheKey]) {
-      setter(c[fallbackCacheKey]);
-      setSyncStatus("cache");
-    } else {
-      setSyncStatus("error");
-    }
-  }, []);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const refreshUser = useCallback(async () => {
-    setUserLoading(true);
-    setError(null);
-    try {
-      const u = await fetchUser();
-      setUser(u);
-      saveCache({ user: u });
-    } catch (err: any) {
-      handleError(err, "user", setUser);
-    } finally {
-      setUserLoading(false);
-    }
-  }, [handleError]);
+    setUserLoading(true); setError(null);
+    try { setUser(await fetchUser()); }
+    catch (e: any) { setError(e.message); }
+    finally { setUserLoading(false); }
+  }, []);
 
   const refreshRepos = useCallback(async () => {
-    setReposLoading(true);
-    setError(null);
-    try {
-      const r = await fetchRepos();
-      setRepos(r);
-      saveCache({ repos: r });
-      setSyncStatus((prev) => (prev === "cache" || prev === "error" ? prev : "live"));
-    } catch (err: any) {
-      handleError(err, "repos", setRepos);
-    } finally {
-      setReposLoading(false);
-    }
-  }, [handleError]);
+    setReposLoading(true); setError(null);
+    try { setRepos(await fetchRepos()); }
+    catch (e: any) { setError(e.message); }
+    finally { setReposLoading(false); }
+  }, []);
 
   const refreshIssues = useCallback(async () => {
-    setIssuesLoading(true);
-    setError(null);
-    try {
-      const i = await fetchIssues();
-      setIssues(i);
-      saveCache({ issues: i });
-      setSyncStatus((prev) => (prev === "cache" || prev === "error" ? prev : "live"));
-    } catch (err: any) {
-      handleError(err, "issues", setIssues);
-    } finally {
-      setIssuesLoading(false);
-    }
-  }, [handleError]);
+    setIssuesLoading(true); setError(null);
+    try { setIssues(await fetchIssues()); }
+    catch (e: any) { setError(e.message); }
+    finally { setIssuesLoading(false); }
+  }, []);
 
   const refreshOrgs = useCallback(async () => {
-    if (orgs.length > 0 && !orgsLoading) return;
-    setOrgsLoading(true);
-    setError(null);
-    try {
-      const o = await fetchOrgs();
-      setOrgs(o);
-      saveCache({ orgs: o });
-    } catch (err: any) {
-      handleError(err, "orgs", setOrgs);
-    } finally {
-      setOrgsLoading(false);
-    }
-  }, [orgs.length, orgsLoading, handleError]);
+    setOrgsLoading(true); setError(null);
+    try { setOrgs(await fetchOrgs()); }
+    catch (e: any) { setError(e.message); }
+    finally { setOrgsLoading(false); }
+  }, []);
 
   // Initial eager load: user + repos + issues
   useEffect(() => {
-    setSyncStatus("syncing");
-    Promise.all([refreshUser(), refreshRepos(), refreshIssues()]).then(() => {
-      setLastUpdated(new Date());
-    });
+    refreshUser(); refreshRepos(); refreshIssues();
   }, [refreshUser, refreshRepos, refreshIssues]);
 
-  // Auto-refresh every 360s: repos + issues only
+  // Auto-refresh every 360s: repos + issues (eager), orgs (lazy but kept fresh)
   useEffect(() => {
     const interval = setInterval(() => {
-      setSyncStatus("syncing");
-      Promise.all([refreshRepos(), refreshIssues()]).then(() => {
-        setLastUpdated(new Date());
-      });
+      refreshRepos(); refreshIssues(); refreshOrgs();
+      setLastUpdated(new Date());
     }, 360_000);
     return () => clearInterval(interval);
-  }, [refreshRepos, refreshIssues]);
+  }, [refreshRepos, refreshIssues, refreshOrgs]);
 
   const value: GitHubState = {
     user, repos, orgs, issues,
     userLoading, reposLoading, issuesLoading, orgsLoading,
-    syncStatus, error, errorType, lastUpdated, refreshOrgs,
+    error, lastUpdated, refreshOrgs,
   };
 
   return (

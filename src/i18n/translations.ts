@@ -3,7 +3,7 @@ export type Lang = "it" | "en";
 export const translations = {
   it: {
     lang: "it" as const,
-    nav: { home: "Home", projects: "Progetti", skills: "Competenze", issues: "Issue", orgs: "Org", about: "Chi Sono" },
+    nav: { home: "Home", projects: "Progetti", skills: "Competenze", issues: "Issue", orgs: "Org", about: "Chi Sono", starred: "Starred" },
     hero: { repos: "Repository", following: "Following", languages: "Linguaggi" },
     projects: { title: "Progetti", subtitle: "Repository open-source, giochi, utility e app.", search: "Cerca progetti...", all: "Tutti", none: "Nessun progetto trovato." },
     skills: { title: "Competenze", distribution: "Distribuzione Linguaggi" },
@@ -16,7 +16,7 @@ export const translations = {
   },
   en: {
     lang: "en" as const,
-    nav: { home: "Home", projects: "Projects", skills: "Skills", issues: "Issues", orgs: "Orgs", about: "About" },
+    nav: { home: "Home", projects: "Projects", skills: "Skills", issues: "Issues", orgs: "Orgs", about: "About", starred: "Starred" },
     hero: { repos: "Repositories", following: "Following", languages: "Languages" },
     projects: { title: "Projects", subtitle: "Open-source repos, games, utilities and apps.", search: "Search projects...", all: "All", none: "No projects found." },
     skills: { title: "Skills", distribution: "Language Distribution" },
@@ -31,7 +31,7 @@ export const translations = {
 
 export type Translations = {
   lang: "it" | "en";
-  nav: { home: string; projects: string; skills: string; issues: string; orgs: string; about: string };
+  nav: { home: string; projects: string; skills: string; issues: string; orgs: string; about: string; starred: string };
   hero: { repos: string; following: string; languages: string };
   projects: { title: string; subtitle: string; search: string; all: string; none: string };
   skills: { title: string; distribution: string };
