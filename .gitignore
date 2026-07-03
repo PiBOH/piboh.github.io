@@ -25,6 +25,8 @@ dist-ssr
 .vite-source-tags.js
 .vercel
 *.zip
+/.zip
+*/.zip
 .logo-images/Gemini_Generated_Image_33crga33crga33cr.png
 .logo-images/Gemini_Generated_Image_3o95ts3o95ts3o95.png
 .logo-images/Gemini_Generated_Image_479x4t479x4t479x.png
