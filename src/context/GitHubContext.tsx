@@ -54,6 +54,8 @@ export interface Issue {
   labels: { name: string; color: string }[];
 }
 
+export type SyncStatus = "syncing" | "live" | "cache" | "error";
+
 interface GitHubState {
   user: UserInfo | null;
   repos: Project[];
@@ -67,6 +69,7 @@ interface GitHubState {
   orgsLoading: boolean;
   error: string | null;
   lastUpdated: Date | null;
+  syncStatus: SyncStatus;
   refreshStarred: () => Promise<void>;
   refreshOrgs: () => Promise<void>;
 }
@@ -224,10 +227,13 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval);
   }, [refreshRepos, refreshIssues]);
 
+  const isLoading = userLoading || reposLoading || starredLoading || issuesLoading || orgsLoading;
+  const syncStatus: SyncStatus = error && !isLoading ? "error" : isLoading ? "syncing" : lastUpdated ? "live" : "cache";
+
   const value: GitHubState = {
     user, repos, starred, orgs, issues,
     userLoading, reposLoading, starredLoading, issuesLoading, orgsLoading,
-    error, lastUpdated, refreshStarred, refreshOrgs,
+    error, lastUpdated, syncStatus, refreshStarred, refreshOrgs,
   };
 
   return (
