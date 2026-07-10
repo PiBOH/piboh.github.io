@@ -213,19 +213,19 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
     finally { setOrgsLoading(false); }
   }, []);
 
-  // Initial eager load: user + repos + issues
+  // Initial eager load: user + repos + starred + issues
   useEffect(() => {
-    refreshUser(); refreshRepos(); refreshIssues();
-  }, [refreshUser, refreshRepos, refreshIssues]);
+    refreshUser(); refreshRepos(); refreshStarred(); refreshIssues();
+  }, [refreshUser, refreshRepos, refreshStarred, refreshIssues]);
 
-  // Auto-refresh every 360s: repos + issues (eager)
+  // Auto-refresh every 360s: repos + starred + issues (eager)
   useEffect(() => {
     const interval = setInterval(() => {
-      refreshRepos(); refreshIssues();
+      refreshRepos(); refreshStarred(); refreshIssues();
       setLastUpdated(new Date());
     }, 360_000);
     return () => clearInterval(interval);
-  }, [refreshRepos, refreshIssues]);
+  }, [refreshRepos, refreshStarred, refreshIssues]);
 
   const isLoading = userLoading || reposLoading || starredLoading || issuesLoading || orgsLoading;
   const syncStatus: SyncStatus = error && !isLoading ? "error" : isLoading ? "syncing" : lastUpdated ? "live" : "cache";
