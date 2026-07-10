@@ -16,6 +16,7 @@ export interface Project {
   forks_count: number;
   updated_at: string;
   private: boolean;
+  owner?: { login: string; avatar_url: string };
 }
 
 export interface UserInfo {
@@ -56,14 +57,17 @@ export interface Issue {
 interface GitHubState {
   user: UserInfo | null;
   repos: Project[];
+  starred: Project[];
   orgs: Org[];
   issues: Issue[];
   userLoading: boolean;
   reposLoading: boolean;
+  starredLoading: boolean;
   issuesLoading: boolean;
   orgsLoading: boolean;
   error: string | null;
   lastUpdated: Date | null;
+  refreshStarred: () => Promise<void>;
   refreshOrgs: () => Promise<void>;
 }
 
@@ -114,6 +118,19 @@ async function fetchRepos(): Promise<Project[]> {
     fork: r.fork, archived: r.archived, default_branch: r.default_branch,
     open_issues_count: r.open_issues_count, stargazers_count: r.stargazers_count || 0,
     forks_count: r.forks_count || 0, updated_at: r.updated_at, private: r.private || false,
+    owner: r.owner ? { login: r.owner.login, avatar_url: r.owner.avatar_url } : undefined,
+  }));
+}
+
+async function fetchStarred(): Promise<Project[]> {
+  const data = await fetchJson("https://api.github.com/users/PiBOH/starred?per_page=100&sort=updated");
+  return data.map((r: any) => ({
+    id: r.id, name: r.name, description: r.description, language: r.language,
+    homepage: r.homepage, html_url: r.html_url, topics: r.topics || [],
+    fork: r.fork, archived: r.archived, default_branch: r.default_branch || "main",
+    open_issues_count: r.open_issues_count || 0, stargazers_count: r.stargazers_count || 0,
+    forks_count: r.forks_count || 0, updated_at: r.updated_at, private: r.private || false,
+    owner: r.owner ? { login: r.owner.login, avatar_url: r.owner.avatar_url } : undefined,
   }));
 }
 
@@ -147,12 +164,14 @@ async function fetchIssues(): Promise<Issue[]> {
 export function GitHubProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserInfo>(defaultUser);
   const [repos, setRepos] = useState<Project[]>([]);
+  const [starred, setStarred] = useState<Project[]>([]);
   const [orgs, setOrgs] = useState<Org[]>([]);
   const [issues, setIssues] = useState<Issue[]>([]);
   const [userLoading, setUserLoading] = useState(true);
   const [reposLoading, setReposLoading] = useState(true);
-  const [orgsLoading, setOrgsLoading] = useState(false);
+  const [starredLoading, setStarredLoading] = useState(false);
   const [issuesLoading, setIssuesLoading] = useState(true);
+  const [orgsLoading, setOrgsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
@@ -168,6 +187,13 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
     try { setRepos(await fetchRepos()); }
     catch (e: any) { setError(e.message); }
     finally { setReposLoading(false); }
+  }, []);
+
+  const refreshStarred = useCallback(async () => {
+    setStarredLoading(true); setError(null);
+    try { setStarred(await fetchStarred()); }
+    catch (e: any) { setError(e.message); }
+    finally { setStarredLoading(false); }
   }, []);
 
   const refreshIssues = useCallback(async () => {
@@ -189,19 +215,19 @@ export function GitHubProvider({ children }: { children: ReactNode }) {
     refreshUser(); refreshRepos(); refreshIssues();
   }, [refreshUser, refreshRepos, refreshIssues]);
 
-  // Auto-refresh every 360s: repos + issues (eager), orgs (lazy but kept fresh)
+  // Auto-refresh every 360s: repos + issues (eager)
   useEffect(() => {
     const interval = setInterval(() => {
-      refreshRepos(); refreshIssues(); refreshOrgs();
+      refreshRepos(); refreshIssues();
       setLastUpdated(new Date());
     }, 360_000);
     return () => clearInterval(interval);
-  }, [refreshRepos, refreshIssues, refreshOrgs]);
+  }, [refreshRepos, refreshIssues]);
 
   const value: GitHubState = {
-    user, repos, orgs, issues,
-    userLoading, reposLoading, issuesLoading, orgsLoading,
-    error, lastUpdated, refreshOrgs,
+    user, repos, starred, orgs, issues,
+    userLoading, reposLoading, starredLoading, issuesLoading, orgsLoading,
+    error, lastUpdated, refreshStarred, refreshOrgs,
   };
 
   return (

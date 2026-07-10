@@ -1,14 +1,485 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-  <meta charset="utf-8">
-  <title>Redirecting...</title>
-  <script>
-    sessionStorage.redirect = location.href;
-  </script>
-  <meta http-equiv="refresh" content="0;URL='./'">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 OS 1.0.0w // ACCESS DENIED</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&amp;display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #00ff41;
+    --green-dark: #00cc33;
+    --red: #ff0033;
+    --cyan: #00ffff;
+    --amber: #ffaa00;
+    --bg: #000000;
+    --panel: #0a0a0a;
+    --panel2: #111111;
+    --bd: #222222;
+    --bd2: #1a1a1a;
+    --fg: #00ff41;
+    --muted: #00aa22;
+    --dim: #004411;
+  }
+
+  html, body { min-height: 100%; }
+  body {
+    background: #000;
+    color: var(--fg);
+    font-family: 'VT323', monospace;
+    overflow-x: hidden;
+    image-rendering: pixelated;
+  }
+
+  /* Matrix Rain */
+  #matrix {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  .crt {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      repeating-linear-gradient(
+        rgba(0, 255, 65, 0.03) 0px,
+        rgba(0, 255, 65, 0.03) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    box-shadow: inset 0 0 180px rgba(0,0,0,0.9);
+  }
+
+  .noise {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 50%, transparent 50%);
+    background-size: 100% 3px;
+    animation: noise 0.15s steps(1) infinite;
+    mix-blend-mode: screen;
+    opacity: 0.4;
+  }
+
+  @keyframes noise {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(1px, -1px); }
+  }
+
+  .boot-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(0,255,65,0.05), transparent 50%),
+      radial-gradient(circle at 70% 80%, rgba(255,0,51,0.04), transparent 50%);
+  }
+
+  /* MAIN */
+  main {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    padding: 30px 16px 60px;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeIn 0.6s 0.2s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; transform: none; }
+  }
+
+  .recovery-shell {
+    width: min(1100px, 96vw);
+    border: 2px solid var(--green);
+    background: rgba(0, 0, 0, 0.92);
+    box-shadow: 0 0 0 6px #000, 0 0 80px rgba(0,255,65,0.15);
+    font-family: 'VT323', monospace;
+  }
+
+  .terminal-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 12px;
+    border-bottom: 2px solid var(--green);
+    background: #000;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .traffic span {
+    width: 9px; height: 9px;
+    border: 1px solid var(--green);
+    display: inline-block;
+    margin-right: 3px;
+  }
+  .traffic .r { background: var(--red); }
+  .traffic .y { background: var(--amber); }
+  .traffic .g { background: var(--green); }
+
+  .terminal-body {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 0;
+  }
+
+  .left-pane, .right-pane { padding: 18px 20px; }
+  .right-pane {
+    border-left: 2px solid var(--green);
+    background: rgba(0,0,0,0.6);
+  }
+
+  .brand-line {
+    color: var(--cyan);
+    font-size: 15px;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+
+  .big-404 {
+    font-family: 'VT323', monospace;
+    font-size: clamp(90px, 18vw, 180px);
+    line-height: 0.82;
+    font-weight: 400;
+    color: var(--green);
+    text-shadow:
+      0 0 10px var(--green),
+      3px 0 0 var(--red),
+      -2px 0 0 var(--cyan);
+    position: relative;
+  }
+
+  h1 {
+    font-size: 28px;
+    line-height: 1.1;
+    margin-top: 4px;
+    color: #fff;
+    text-shadow: 0 0 6px var(--green);
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 620px;
+    line-height: 1.35;
+  }
+
+  .cmd-block {
+    margin-top: 16px;
+    border: 1px solid var(--bd);
+    background: #000;
+    padding: 10px 12px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--green);
+  }
+
+  .prompt { color: var(--amber); }
+  .cmd { color: #fff; }
+  .err { color: var(--red); }
+  .ok { color: var(--green); }
+  .blue { color: var(--cyan); }
+  .yellow { color: var(--amber); }
+
+  .quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--green);
+    background: #000;
+    color: var(--green);
+    padding: 6px 14px;
+    font-size: 15px;
+    font-family: 'VT323', monospace;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.1s ease;
+  }
+  .action-btn:hover {
+    background: var(--green);
+    color: #000;
+    border-color: #fff;
+  }
+  .action-btn.primary {
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  .right-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: var(--cyan);
+  }
+
+  .os-badge {
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 1px 8px;
+    font-size: 13px;
+  }
+
+  .link-list {
+    display: grid;
+    gap: 6px;
+  }
+
+  .author-link {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 8px;
+    border: 1px solid var(--bd2);
+    color: var(--green);
+    text-decoration: none;
+    font-size: 15px;
+    transition: all 0.15s ease;
+  }
+  .author-link:hover {
+    background: rgba(0,255,65,0.06);
+    border-color: var(--green);
+  }
+  .link-icon {
+    font-size: 15px;
+    text-align: center;
+  }
+  .link-main { font-weight: bold; }
+  .link-sub { font-size: 13px; color: var(--muted); }
+
+  .mini-terminal {
+    margin-top: 14px;
+    border: 1px solid var(--green);
+    background: #000;
+  }
+  .mini-output {
+    min-height: 110px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 8px;
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--green);
+    white-space: pre-wrap;
+  }
+  .mini-input-wrap {
+    border-top: 1px solid var(--green);
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    gap: 4px;
+    font-size: 14px;
+  }
+  #mini-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--green);
+    outline: none;
+    font: inherit;
+    caret-color: var(--green);
+  }
+
+  .footer {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 20;
+    padding: 6px 14px;
+    border-top: 1px solid var(--bd);
+    background: rgba(0,0,0,0.85);
+    color: var(--dim);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer a { color: var(--muted); text-decoration: none; }
+  .footer a:hover { color: var(--green); }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: var(--green); }
+
+  @media (max-width: 860px) {
+    .terminal-body { grid-template-columns: 1fr; }
+    .right-pane { border-left: none; border-top: 2px solid var(--green); }
+  }
+</style>
 </head>
 <body>
-  Redirecting...
+
+<canvas id="matrix"></canvas>
+<div class="crt"></div>
+<div class="noise"></div>
+<div class="boot-bg"></div>
+
+<main id="main-content">
+  <section class="recovery-shell">
+    <div class="terminal-topbar">
+      <div class="traffic"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div style="color:#ffaa00;">root@blackhat:~/404</div>
+      <div style="color:#ff0033;">[COMPROMISED]</div>
+    </div>
+
+    <div class="terminal-body">
+      <div class="left-pane">
+        <div class="brand-line">404 OS 1.0.0w · ACCESS DENIED</div>
+
+        <div class="big-404" data-text="404">404</div>
+
+        <h1>BOOT COMPLETE. PAGE NOT FOUND IN KERNEL SPACE.</h1>
+
+        <p class="subtitle">
+          404 OS kernel loaded. <span style="color:#ffaa00">paginad.service</span> failed to locate the requested resource.<br>
+          You are now inside the recovery shell of a compromised web server.
+        </p>
+
+        <div class="cmd-block">
+          <span class="prompt">root@404os:~#</span> <span class="cmd">systemctl status paginad</span><br>
+          <span class="err">× paginad.service - 404 Payload Loader</span><br>
+          &nbsp;&nbsp;Active: <span class="err">failed</span> (status=404/NOTFOUND)<br>
+          &nbsp;&nbsp;Error: No such file or directory<br>
+          <span class="prompt">root@404os:~#</span> <span class="cmd">cat /var/log/404.log</span><br>
+          <span class="yellow">[CRITICAL]</span> Requested path not in filesystem<br>
+          <span class="blue">[HINT]</span> Try returning to home or contact the operator.
+        </div>
+
+        <div class="quick-actions">
+          <a href="/" class="action-btn primary">RETURN TO HOME</a>
+          <a href="javascript:history.back()" class="action-btn">GO BACK</a>
+          <a href="mailto:piboh.github@gmail.com" class="action-btn">CONTACT ADMIN</a>
+        </div>
+      </div>
+
+      <aside class="right-pane">
+        <div class="right-title">
+          <span>OPERATOR LINKS</span>
+          <span class="os-badge">v1.0.0w</span>
+        </div>
+
+        <div class="link-list">
+          <a class="author-link" href="https://piboh.github.io/">
+            <span class="link-icon">▶</span>
+            <span><span class="link-main">piboh.github.io</span></span>
+          </a>
+          <a class="author-link" href="mailto:piboh.github@gmail.com">
+            <span class="link-icon">✉</span>
+            <span><span class="link-main">piboh.github@gmail.com</span></span>
+          </a>
+          <a class="author-link" href="https://github.com/PiBOH">
+            <span class="link-icon">GH</span>
+            <span><span class="link-main">github.com/PiBOH</span></span>
+          </a>
+        </div>
+
+        <div class="mini-terminal">
+          <div class="mini-output" id="mini-output">404 OS root shell v1.0.0w
+Type "help" for available commands.
+</div>
+          <div class="mini-input-wrap">
+            <span class="prompt">hax0r@blackhat:~$</span>
+            <input id="mini-input" type="text" autocomplete="off" placeholder="help">
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span>404 OS 1.0.0w · <a href="https://piboh.github.io/">piboh.github.io</a></span>
+  <span><a href="mailto:piboh.github@gmail.com">piboh.github@gmail.com</a></span>
+</footer>
+
+<script>
+// ===== MATRIX RAIN =====
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+
+function resizeMatrix() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeMatrix);
+resizeMatrix();
+
+const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+const fontSize = 14;
+let columns = Math.floor(canvas.width / fontSize);
+let drops = Array(columns).fill(1);
+
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#00ff41';
+  ctx.font = fontSize + 'px VT323';
+  for (let i = 0; i < drops.length; i++) {
+    const text = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
+    drops[i]++;
+  }
+}
+setInterval(drawMatrix, 50);
+
+// ===== MINI SHELL =====
+const miniOutput = document.getElementById('mini-output');
+const miniInput = document.getElementById('mini-input');
+
+const miniCommands = {
+  help: 'Comandi:\n  help     mostra comandi\n  info     mostra ASCII art e versione\n  links    mostra i link dell\'autore\n  status   stato servizio\n  os       versione\n  path     path richiesto\n  clear    pulisci',
+  info: ' _  _    ___  _  _      ___  ____\n | || |  / _ \\| || |    / _ \\ / ___|\n | || |_| | | | || |_  | | | |\\___ \\\n |__   _| |_| |__   _| | |_| | ___) |\n    |_|  \\___/   |_|    \\___/ |____/\n\n 404 OS v1.0.0w',
+  links: 'Collegamenti autore:\n\n  Sito:    https://piboh.github.io/\n  Mail:    piboh.github@gmail.com\n  GitHub:  https://github.com/PiBOH',
+  status: 'paginad.service → FAILED (404)',
+  os: '404 OS 1.0.0w',
+  path: 'Requested: ' + (window.location.pathname || '/'),
+  clear: ''
+};
+
+miniInput.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  const cmd = miniInput.value.trim().toLowerCase();
+  miniInput.value = '';
+  miniOutput.innerHTML += '\n<span class="prompt">hax0r@blackhat:~$</span> ' + escapeHtml(cmd) + '\n';
+
+  if (cmd === 'clear') {
+    miniOutput.textContent = '';
+  } else {
+    miniOutput.innerHTML += escapeHtml(miniCommands[cmd] || 'command not found: ' + cmd) + '\n';
+  }
+  miniOutput.scrollTop = miniOutput.scrollHeight;
+});
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+</script>
 </body>
 </html>
