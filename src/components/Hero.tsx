@@ -56,7 +56,15 @@ export default function Hero() {
                 <Users size={14} />
                 <span className="text-white font-medium">{fmtOrUnknown(u?.following, userLoading)}</span> {t.hero.following}
               </a>
-              <span className="flex items-center gap-1"><FolderGit size={14} /><span className="text-white font-medium">{fmtOrUnknown(u?.public_repos, userLoading)}</span> {t.hero.repos}</span>
+              <a
+                href={`https://github.com/${u?.login}?tab=repositories`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                <FolderGit size={14} />
+                <span className="text-white font-medium">{fmtOrUnknown(u?.public_repos, userLoading)}</span> {t.hero.repos}
+              </a>
               {joinYear && (
                 <span className="flex items-center gap-1"><Calendar size={14} />{t.lang === "it" ? "Dal" : "Since"} {joinYear}</span>
               )}
