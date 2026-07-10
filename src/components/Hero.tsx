@@ -8,6 +8,29 @@ function fmtOrUnknown(value: number | undefined, loading: boolean): string {
   return String(value);
 }
 
+function Avatar({ url, name, avatarUrl }: { url?: string; name?: string; avatarUrl?: string }) {
+  const gradientClass = "absolute inset-0 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full blur-lg opacity-40 transition-opacity";
+  const imgClass = "relative w-24 h-24 md:w-36 md:h-36 rounded-full border-2 border-white/10 object-cover transition-colors";
+
+  return url ? (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Open GitHub profile"
+      className="relative block group"
+    >
+      <div className={`${gradientClass} group-hover:opacity-60`} />
+      <img src={avatarUrl} alt={name} className={`${imgClass} group-hover:border-white/20`} />
+    </a>
+  ) : (
+    <div className="relative">
+      <div className={gradientClass} />
+      <img src={avatarUrl} alt={name} className={imgClass} />
+    </div>
+  );
+}
+
 export default function Hero() {
   const { user, userLoading } = useGitHub();
   const { t } = useLang();
@@ -21,15 +44,25 @@ export default function Hero() {
         <div className="flex flex-col md:flex-row items-start gap-6 md:gap-8 pb-6 border-b border-white/[0.08]">
           {/* Avatar */}
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="shrink-0">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full blur-lg opacity-40" />
-              <img src={u?.avatar_url} alt={u?.name} className="relative w-24 h-24 md:w-36 md:h-36 rounded-full border-2 border-white/10 object-cover" />
-            </div>
+            <Avatar url={u?.html_url} name={u?.name} avatarUrl={u?.avatar_url} />
           </motion.div>
 
           {/* Info */}
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="flex-1 min-w-0">
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-0.5">{u?.name}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-0.5">
+              {u?.html_url ? (
+                <a
+                  href={u.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-purple-300 transition-colors"
+                >
+                  {u?.name}
+                </a>
+              ) : (
+                u?.name
+              )}
+            </h1>
             <p className="text-base md:text-lg text-gray-400 mb-3">@{u?.login}</p>
 
             {u?.blog && (
