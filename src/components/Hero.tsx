@@ -3,8 +3,13 @@ import { MapPin, Link2, Users, FolderGit, Calendar } from "lucide-react";
 import { useGitHub } from "../context/GitHubContext";
 import { useLang } from "../context/LanguageContext";
 
+function fmtOrUnknown(value: number | undefined, loading: boolean): string {
+  if (loading || value === undefined || value === null) return "?";
+  return String(value);
+}
+
 export default function Hero() {
-  const { user } = useGitHub();
+  const { user, userLoading } = useGitHub();
   const { t } = useLang();
   const u = user;
 
@@ -42,8 +47,16 @@ export default function Hero() {
               {u?.location && (
                 <span className="flex items-center gap-1"><MapPin size={14} />{u.location}</span>
               )}
-              <span className="flex items-center gap-1"><Users size={14} /><span className="text-white font-medium">{u?.following}</span> {t.hero.following}</span>
-              <span className="flex items-center gap-1"><FolderGit size={14} /><span className="text-white font-medium">{u?.public_repos}</span> {t.hero.repos}</span>
+              <a
+                href={`https://github.com/${u?.login}/following`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-gray-500 hover:text-gray-300 transition-colors"
+              >
+                <Users size={14} />
+                <span className="text-white font-medium">{fmtOrUnknown(u?.following, userLoading)}</span> {t.hero.following}
+              </a>
+              <span className="flex items-center gap-1"><FolderGit size={14} /><span className="text-white font-medium">{fmtOrUnknown(u?.public_repos, userLoading)}</span> {t.hero.repos}</span>
               {joinYear && (
                 <span className="flex items-center gap-1"><Calendar size={14} />{t.lang === "it" ? "Dal" : "Since"} {joinYear}</span>
               )}
